@@ -1,7 +1,7 @@
-from calendar import c
 import pygame
 import sys
 import json
+from loop_managers import *
 # Initialize Pygame
 pygame.init()
 
@@ -19,18 +19,26 @@ WHITE = (255, 255, 255)
 clock = pygame.time.Clock()
 
 # Load stuff
-map_data = json.load(open("countries_data.json", "r"))
+map_data = json.load(open("maps/World.json", "r"))
 scale = 1  # Scale factor for the map
 position = (0, 1000)  # Position of the map on the canvas
 mouse_pos = None  # Mouse position
 MAX_SCALE = 10  # Maximum scale factor
-MIN_SCALE = 1  # Minimum scale factor
+MIN_SCALE = 0.1  # Minimum scale factor
 SCALE_STEP = 1.4  # Scale step for zooming in and out
+
+items = json.load(open("maps/learning_sets/mistopis evropa septima.json", "r"))
+items = items["items"]
 
 
 # Main game loop
 def main():
     global scale, position, mouse_pos
+
+    # settup managers
+    Quiz_M = None
+    Menu_M = MenuLoopManager(screen)
+
     running = True
     while running:
         for event in pygame.event.get():
@@ -68,36 +76,16 @@ def main():
         for i in pygame.mouse.get_just_released():
             if i == 1:
                 mouse_pos = None
- 
-
-
 
         # Fill the screen with white
         screen.fill(WHITE)
 
-                # Draw the map data 
-        for _, data in map_data.items():
-            for polygons in data["geometry"]:  # [[...], [...], [...]] example
-                    if len(polygons) < 3:
-                        continue
+        # manage screen
+        if Quiz_M:
+            Quiz_M.update(scale, position)
 
-                    # Draw the polygon
-                    # Scale the polygon coordinates
-                    scaled_polygon = [(x * 10 * scale + position[0], -y * 10 * scale + position[1]) for x, y in polygons]
-                    
-                    # trim the exterior coordinates to the screen size
-                    p = [(x, y) for x, y in scaled_polygon if 0 <= x <= WIDTH and 0 <= y <= HEIGHT]
-
-                    # Skip polygons that are outside the screen
-                    if not p:
-                        continue
-
-                    # Skip polygons that are too small
-                    if len(p) < 3:
-                        continue
-
-                    # Draw the polygon
-                    pygame.draw.aalines(screen, (0, 0, 0), False, scaled_polygon)
+        if Menu_M:
+            Menu_M.update()
 
         # Update the display
         pygame.display.flip()
