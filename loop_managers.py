@@ -1,21 +1,24 @@
 import json
 import os
-
 import pygame
-
-from main import screen
 
 
 class MenuLoopManager:
     def __init__(self, screen):
         self.screen = screen
-        self.maps = [QuizButton(i, json.load(open(f"maps/learning_sets/{i}", 'r'))["Continent"], len(json.load(open(f"maps/learning_sets/{i}", 'r'))["items"])) for i in os.listdir("maps/learning_sets")]
+        self.maps = [QuizButton(i.replace(".json", ""), json.load(open(f"maps/learning_sets/{i}", 'r'))["Continent"], len(json.load(open(f"maps/learning_sets/{i}", 'r'))["items"])) for i in os.listdir("maps/learning_sets")]
         self.active = True
+        self.new_b = NewButton()
+        self.items_width = 300
 
     def update(self):
         y = 0
         for button in self.maps:
-            y += button.draw(self.screen, y)
+            y += button.draw(self.screen, y, self.items_width)
+        self.new_b.draw(self.screen, self.items_width)
+
+        pygame.draw.rect(self.screen, (0, 0, 0), (self.items_width, 0, 30, self.screen.get_height()), 4)  # sets up the scrollbar
+
 
     def __bool__(self):
         return self.active
@@ -59,8 +62,8 @@ class QuizLoopManager:
 
                 # Draw the polygon
                 if bb:
-                    pygame.draw.polygon(screen, (255, 0, 0), scaled_polygon)
-                pygame.draw.aalines(screen, (0, 0, 0), False, scaled_polygon)
+                    pygame.draw.polygon(self.screen, (255, 0, 0), scaled_polygon)
+                pygame.draw.aalines(self.screen, (0, 0, 0), False, scaled_polygon)
 
 
 class QuizButton:
@@ -70,12 +73,23 @@ class QuizButton:
         self.continent = continent
         self.font = pygame.font.SysFont("monospace", 20)
 
-    def draw(self, screen, y):
+    def draw(self, screen, y, w):
         name_surface = self.font.render(self.name, True, (0, 0, 0))
         items_surface = self.font.render("počet: "+ str(self.item_l), True, (0, 0, 0))
         continents_surface = self.font.render(self.continent, True, (0, 0, 0))
-        screen.blit(name_surface, (0, y))
-        screen.blit(items_surface, (0, y + name_surface.get_height()))
-        screen.blit(continents_surface, (0, y + name_surface.get_height() + items_surface.get_height()))
-        pygame.draw.rect(screen, (0, 0, 0), (0, y, name_surface.get_width(), name_surface.get_height() + items_surface.get_height() + continents_surface.get_height()), 2)
+        screen.blit(name_surface, (10, y))
+        screen.blit(items_surface, (10, y + name_surface.get_height()))
+        screen.blit(continents_surface, (10, y + name_surface.get_height() + items_surface.get_height()))
+        pygame.draw.rect(screen, (0, 0, 0), (0, y, w, name_surface.get_height() + items_surface.get_height() + continents_surface.get_height()), 2)
         return name_surface.get_height() + items_surface.get_height() + continents_surface.get_height()
+
+class NewButton:
+    def __init__(self):
+        self.text = "Nový kvíz"
+        self.font = pygame.font.SysFont("monospace", 20)
+        self.text_surface = self.font.render(self.text, True, (0, 0, 0))
+        self.height = 50
+
+    def draw(self, screen, w):
+        screen.blit(self.text_surface, (w/2 - self.text_surface.get_width()/2, screen.get_height() - self.text_surface.get_height() - self.height/2 + self.text_surface.get_height()/2))
+        pygame.draw.rect(screen, (0, 0, 0), (0, screen.get_height() - self.height, w, self.height), 2)

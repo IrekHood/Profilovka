@@ -1,12 +1,11 @@
-import pygame
 import sys
-import json
 from loop_managers import *
 # Initialize Pygame
 pygame.init()
 
 # Screen dimensions
 WIDTH, HEIGHT = 800, 600
+
 
 # Create the screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
