@@ -8,7 +8,7 @@ WIDTH, HEIGHT = 800, 600
 
 
 # Create the screen
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("Pygame Setup")
 
 # Colors
@@ -84,7 +84,14 @@ def main():
             Quiz_M.update(scale, position)
 
         if Menu_M:
-            Menu_M.update()
+            v = Menu_M.update(event.y if event.type == pygame.MOUSEWHEEL else 0)
+            if v == 1:
+                print("CREATE New Quiz")
+                Menu_M.active = False 
+            elif v == 2:
+                Quiz_M = QuizLoopManager(screen, map_data, ["Czechia", "Deutschland", "Poland", "France", "Portugal"])
+                Menu_M.active = False
+                
 
         # Update the display
         pygame.display.flip()
