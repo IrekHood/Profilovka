@@ -4,7 +4,7 @@ from loop_managers import *
 pygame.init()
 
 # Screen dimensions
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1920, 1080
 
 
 # Create the screen
@@ -37,6 +37,7 @@ def main():
     # settup managers
     Quiz_M = None
     Menu_M = MenuLoopManager(screen)
+    Creator_M = CreatorLoopManager(screen)
 
     running = True
     while running:
@@ -62,6 +63,7 @@ def main():
                         mouse_y - (mouse_y - position[1]) / SCALE_STEP,
                     )
                     scale /= SCALE_STEP
+            Creator_M.input_capture.handle_event(event)
 
 
         for i in pygame.mouse.get_pressed():
@@ -85,13 +87,17 @@ def main():
 
         if Menu_M:
             v = Menu_M.update(event.y if event.type == pygame.MOUSEWHEEL else 0)
-            if v == 1:
-                print("CREATE New Quiz")
+            if v[0] == 1:  # if new quiz button was pressed
+                Creator_M.active = True
                 Menu_M.active = False 
-            elif v == 2:
-                Quiz_M = QuizLoopManager(screen, map_data, ["Czechia", "Deutschland", "Poland", "France", "Portugal"])
+            elif v[0] == 2:  # if quiz button was pressed
+                Quiz_M = QuizLoopManager(screen, map_data, v[1])
                 Menu_M.active = False
-                
+
+        if Creator_M:
+            if not Creator_M.update():
+                Creator_M.active = False
+                Menu_M = MenuLoopManager(screen)
 
         # Update the display
         pygame.display.flip()
