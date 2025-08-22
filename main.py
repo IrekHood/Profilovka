@@ -1,4 +1,5 @@
 import sys
+import asyncio
 from loop_managers import *
 # Initialize Pygame
 pygame.init()
@@ -22,20 +23,9 @@ map_data = json.load(open("maps/World.json", "r"))
 items = json.load(open("maps/learning_sets/mistopis evropa septima.json", "r"))
 items = items["items"]
 
-def check_boundaries(position):
-    if position[0] / scale > 200:
-        position[0] = 200 * scale
-    if position[1] / scale > 200:
-        position[1] = 200 * scale
-    if position[0] / scale < -200:
-        position[0] = -200 * scale
-    if position[1] / scale < -200:
-        position[1] = -200 * scale
-    return position
 
 # Main game loop
-def main():
-    global scale, position, mouse_pos
+async def main():
 
     # settup managers
     Quiz_M = None
@@ -60,7 +50,7 @@ def main():
 
         # manage screen
         if Quiz_M:
-            Quiz_M.update()
+            Quiz_M.update(screen)
 
         if Menu_M:
             v = Menu_M.update(event.y if event.type == pygame.MOUSEWHEEL else 0)
@@ -82,8 +72,11 @@ def main():
         # Cap the frame rate to 60 FPS
         clock.tick(60)
 
+        # asyncio
+        await asyncio.sleep(0)
+
     pygame.quit()
     sys.exit()
 
-if __name__ == "__main__":
-    main()
+
+asyncio.run(main())

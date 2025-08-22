@@ -1,6 +1,55 @@
 import json
 import os
+import random
 import pygame
+
+
+def circle_polygon_collision(circle_center, circle_radius, polygon_points):
+    """
+    Check if a circle intersects a polygon.
+
+    Args:
+        circle_center (tuple): (x, y) of circle center in screen coords
+        circle_radius (float): circle radius
+        polygon_points (list): list of tuples of (x, y) coordinates
+
+    Returns:
+        bool
+    """
+    cx, cy = circle_center
+
+    # --- 2. Check if circle center is inside polygon (ray-casting) ---
+    inside = False
+    n = len(polygon_points)
+    for i in range(n):
+        x1, y1 = polygon_points[i]
+        x2, y2 = polygon_points[(i + 1) % n]
+        if ((y1 > cy) != (y2 > cy)) and \
+                (cx < (x2 - x1) * (cy - y1) / (y2 - y1 + 1e-12) + x1):
+            inside = not inside
+    if inside:
+        return True
+
+    # --- 3. Check distance to polygon edges ---
+    for i in range(n):
+        x1, y1 = polygon_points[i]
+        x2, y2 = polygon_points[(i + 1) % n]
+
+        # Closest point on line segment to circle center
+        dx, dy = x2 - x1, y2 - y1
+        if dx == 0 and dy == 0:  # Degenerate edge
+            dist_sq = (cx - x1) ** 2 + (cy - y1) ** 2
+        else:
+            t = max(0, min(1, ((cx - x1) * dx + (cy - y1) * dy) / (dx * dx + dy * dy)))
+            closest_x = x1 + t * dx
+            closest_y = y1 + t * dy
+            dist_sq = (cx - closest_x) ** 2 + (cy - closest_y) ** 2
+
+        if dist_sq <= circle_radius ** 2:
+            return True
+
+    return False
+
 
 class MenuLoopManager:
     def __init__(self, screen):
@@ -14,7 +63,6 @@ class MenuLoopManager:
 
     def update(self, scroll_value):
 
-        y_offset = 0
         # draw the scrollbar
 
         if len(self.maps) * self.button_height > self.screen.get_height() - self.new_b.height:
@@ -32,7 +80,6 @@ class MenuLoopManager:
             self.scroll_pos = max(0, self.scroll_pos)  # prevent scrolling above the top
             self.scroll_pos = min(self.scroll_pos, self.screen.get_height() - self.new_b.height - scrollbar_height)  # prevent scrolling below the bottom
 
-            
             # draw the scrollbar
             pygame.draw.rect(self.screen, (200, 40, 40), (self.items_width + 5, self.scroll_pos, 20, scrollbar_height))
         else:
@@ -63,24 +110,33 @@ class MenuLoopManager:
 
 
 class QuizLoopManager:
-    def __init__(self, screen, map, quiz_info):
+    def __init__(self, screen, world_map, quiz_info):
         self.screen = screen
-        self.map_data = map
+        self.map_data = world_map
         self.items = quiz_info
         self.active = True
         self.position = [1500, 0]
         self.scale = 7
-        self.MAX_SCALE = 30  # Maximum scale factor
+        self.MAX_SCALE = 300  # Maximum scale factor
         self.MIN_SCALE = 5  # Minimum scale factor
         self.SCALE_STEP = 1.4  # Scale step for zooming in and out
         self.mouse_pos = None
-        self.original_map_size = [400, 400] # 0, 0 is in the middle of the map
+        self.original_map_size = [400, 400]  # 0, 0 is in the middle of the map
+        self.mode = 1
+        self.preprocess_map_data()
+        self.font = pygame.font.SysFont("Arial", 30)
+        self.tested_place = None
+        self.looked_at_polygons = []
+        self.previous_polygons = []
+        self.previous_name = None
+        self.highlight_until = pygame.time.get_ticks() + 1000  # example wil expire after 1s
+        self.clicked_color = (0, 200, 0)
+        self.mouse_pressed = False
 
     def __bool__(self):
         return self.active
 
     def input(self, event):
-
 
         # scale changes
         if event.type == pygame.MOUSEWHEEL:
@@ -102,63 +158,107 @@ class QuizLoopManager:
         self.clamp_position()  # to not go out of bounds
 
         # moving the map
-        for i in pygame.mouse.get_pressed():
-            if i == 1:
-                if self.mouse_pos is None:
-                    self.mouse_pos = pygame.mouse.get_pos()
+        if pygame.mouse.get_pressed()[2]:
+            if self.mouse_pos is None:
+                self.mouse_pos = pygame.mouse.get_pos()
+            else:
+                diff = (pygame.mouse.get_pos()[0] - self.mouse_pos[0], pygame.mouse.get_pos()[1] - self.mouse_pos[1])
+                self.position = [self.position[0] + diff[0], self.position[1] + diff[1]]
+                self.mouse_pos = pygame.mouse.get_pos()
+
+        if not pygame.mouse.get_pressed()[2]:
+            self.mouse_pos = None
+
+        self.clamp_position()  # to not go out of bounds
+
+    def update(self, screen):
+        self.looked_at_polygons = []
+        self.previous_polygons = []
+        for scaled_polygon, name in self.get_visible_polygons():
+            pygame.draw.aalines(screen, (0, 0, 0), False, scaled_polygon)
+
+            # get all clickable polygons of targeted place
+            if name == self.tested_place:
+                self.looked_at_polygons.append(scaled_polygon)
+            if name == self.previous_name:
+                self.previous_polygons.append(scaled_polygon)
+
+        if self.mode == 1:  # tests you with a random place
+
+            # highlight clicked place
+            if self.previous_polygons and self.highlight_until > pygame.time.get_ticks():
+                for polygon in self.previous_polygons:
+                    pygame.draw.polygon(screen, self.clicked_color, polygon)
+
+            # draw name of the tested place
+            if self.tested_place is None:
+                self.tested_place = random.choice(self.items)
+            text_surface = self.font.render(self.tested_place, True, (0, 0, 0), (255, 255, 255))
+            screen.blit(text_surface, (screen.get_width()/2 - text_surface.get_width()/2, 0))
+
+            # check if the tested place is pressed
+            if pygame.mouse.get_pressed()[0] and not self.mouse_pressed:
+                clicked = False
+                self.mouse_pressed = True
+                for i in self.looked_at_polygons:
+                    if circle_polygon_collision(pygame.mouse.get_pos(), 10, i):
+                        clicked = True
+
+                self.highlight_until = pygame.time.get_ticks() + 1000
+                self.previous_name = self.tested_place
+                self.tested_place = None
+
+                if clicked:
+                    self.clicked_color = (0, 200, 0)
                 else:
-                    diff = (pygame.mouse.get_pos()[0] - self.mouse_pos[0], pygame.mouse.get_pos()[1] - self.mouse_pos[1])
-                    self.position = [self.position[0] + diff[0], self.position[1] + diff[1]]
-                    self.mouse_pos = pygame.mouse.get_pos()
+                    self.clicked_color = (200, 60, 60)
 
-        for i in pygame.mouse.get_just_released():
-            if i == 1:
-                self.mouse_pos = None
+            # reset mouse pressing
+            if not pygame.mouse.get_pressed()[0]:
+                self.mouse_pressed = False
 
-        self.clamp_position()  # to not go out of bounds
+    def get_visible_polygons(self):
+        """
+        Yield (scaled_polygon, is_selected) for all visible polygons.
+        Uses precomputed bounding boxes for fast rejection.
+        """
+        screen_w, screen_h = self.screen.get_size()
 
-    def update(self):
-
-        self.clamp_position()  # to not go out of bounds
-
-
-        # Draw the map data
         for name, data in self.map_data.items():
-            bb = False
-            if name in self.items:
-                bb = True
-            for polygons in data["geometry"]:  # [[...], [...], [...]] example
-                if len(polygons) < 3:
+            for poly in data["geometry"]:
+                points = poly["points"]
+                min_x, min_y, max_x, max_y = poly["bbox"]
+
+                # Scale + translate bbox
+                scaled_min_x = min_x * self.scale + self.position[0]
+                scaled_max_x = max_x * self.scale + self.position[0]
+                scaled_min_y = -max_y * self.scale + self.position[1]  # note: Y flipped
+                scaled_max_y = -min_y * self.scale + self.position[1]
+
+                # Quick reject: check if bbox overlaps screen
+                if scaled_max_x < 0 or scaled_min_x > screen_w or scaled_max_y < 0 or scaled_min_y > screen_h:
                     continue
 
-                # Draw the polygon
-                # Scale the polygon coordinates
-                scaled_polygon = [(x * self.scale + self.position[0], -y * self.scale + self.position[1]) for x, y in polygons]
-
-                # trim the exterior coordinates to the screen size
-                p = [(x, y) for x, y in scaled_polygon if 0 <= x <= self.screen.get_width() and 0 <= y <= self.screen.get_height()]
-
-                # Skip polygons that are outside the screen
-                if not p:
+                # Too small? (bounding box dimensions after scaling)
+                if (scaled_max_x - scaled_min_x) < 2 or (scaled_max_y - scaled_min_y) < 2:
                     continue
 
-                # Skip polygons that are too small
-                if len(p) < 3:
-                    continue
+                # Only scale full polygon if visible
+                scaled_polygon = [
+                    (x * self.scale + self.position[0], -y * self.scale + self.position[1])
+                    for x, y in points
+                ]
 
-                # Draw the polygon
-                if bb:
-                    pygame.draw.polygon(self.screen, (255, 0, 0), scaled_polygon)
-                pygame.draw.aalines(self.screen, (0, 0, 0), False, scaled_polygon)
+                yield scaled_polygon, name
 
     def clamp_position(self):
         """Clamp self.position so the map (centered at pos) stays inside screen."""
-        map_width  = self.original_map_size[0] * self.scale
+        map_width = self.original_map_size[0] * self.scale
         map_height = self.original_map_size[1] * self.scale
         screen_width, screen_height = self.screen.get_size()
 
         # Calculate allowed ranges for the map center
-        min_x = screen_width  - map_width/2
+        min_x = screen_width - map_width/2
         max_x = map_width/2
         min_y = screen_height - map_height/2
         max_y = map_height/2
@@ -166,6 +266,22 @@ class QuizLoopManager:
         # Clamp position (map center)
         self.position[0] = max(min_x, min(self.position[0], max_x))
         self.position[1] = max(min_y, min(self.position[1], max_y))
+
+    def preprocess_map_data(self):
+        """
+        Add precomputed bounding boxes to each polygon in map_data.
+        Each polygon becomes a dict: {"points": [...], "bbox": (min_x, min_y, max_x, max_y)}
+        """
+        for name, data in self.map_data.items():
+            processed_polys = []
+            for polygon in data["geometry"]:
+                if len(polygon) < 3:
+                    continue
+                xs = [p[0] for p in polygon]
+                ys = [p[1] for p in polygon]
+                bbox = (min(xs), min(ys), max(xs), max(ys))
+                processed_polys.append({"points": polygon, "bbox": bbox})
+            data["geometry"] = processed_polys
 
 
 class CreatorLoopManager:
