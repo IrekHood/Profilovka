@@ -20,9 +20,6 @@ clock = pygame.time.Clock()
 
 # Load stuff
 map_data = json.load(open("maps/World.json", "r"))
-items = json.load(open("maps/learning_sets/mistopis evropa septima.json", "r"))
-items = items["items"]
-
 
 # Main game loop
 async def main():
