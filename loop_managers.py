@@ -68,11 +68,59 @@ class QuizLoopManager:
         self.map_data = map
         self.items = quiz_info
         self.active = True
+        self.position = [1500, 0]
+        self.scale = 7
+        self.MAX_SCALE = 30  # Maximum scale factor
+        self.MIN_SCALE = 5  # Minimum scale factor
+        self.SCALE_STEP = 1.4  # Scale step for zooming in and out
+        self.mouse_pos = None
+        self.original_map_size = [400, 400] # 0, 0 is in the middle of the map
 
     def __bool__(self):
         return self.active
 
-    def update(self, scale, position):
+    def input(self, event):
+
+
+        # scale changes
+        if event.type == pygame.MOUSEWHEEL:
+            if event.y > 0 and not self.scale * self.SCALE_STEP > self.MAX_SCALE:  # Zoom in
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                self.position = [
+                    mouse_x - (mouse_x - self.position[0]) * self.SCALE_STEP,
+                    mouse_y - (mouse_y - self.position[1]) * self.SCALE_STEP,
+                ]
+                self.scale *= self.SCALE_STEP
+            elif event.y < 0 and not self.scale / self.SCALE_STEP < self.MIN_SCALE:  # Zoom out
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                self.position = [
+                    mouse_x - (mouse_x - self.position[0]) / self.SCALE_STEP,
+                    mouse_y - (mouse_y - self.position[1]) / self.SCALE_STEP,
+                ]
+                self.scale /= self.SCALE_STEP
+
+        self.clamp_position()  # to not go out of bounds
+
+        # moving the map
+        for i in pygame.mouse.get_pressed():
+            if i == 1:
+                if self.mouse_pos is None:
+                    self.mouse_pos = pygame.mouse.get_pos()
+                else:
+                    diff = (pygame.mouse.get_pos()[0] - self.mouse_pos[0], pygame.mouse.get_pos()[1] - self.mouse_pos[1])
+                    self.position = [self.position[0] + diff[0], self.position[1] + diff[1]]
+                    self.mouse_pos = pygame.mouse.get_pos()
+
+        for i in pygame.mouse.get_just_released():
+            if i == 1:
+                self.mouse_pos = None
+
+        self.clamp_position()  # to not go out of bounds
+
+    def update(self):
+
+        self.clamp_position()  # to not go out of bounds
+
 
         # Draw the map data
         for name, data in self.map_data.items():
@@ -85,7 +133,7 @@ class QuizLoopManager:
 
                 # Draw the polygon
                 # Scale the polygon coordinates
-                scaled_polygon = [(x * 10 * scale + position[0], -y * 10 * scale + position[1]) for x, y in polygons]
+                scaled_polygon = [(x * self.scale + self.position[0], -y * self.scale + self.position[1]) for x, y in polygons]
 
                 # trim the exterior coordinates to the screen size
                 p = [(x, y) for x, y in scaled_polygon if 0 <= x <= self.screen.get_width() and 0 <= y <= self.screen.get_height()]
@@ -102,6 +150,22 @@ class QuizLoopManager:
                 if bb:
                     pygame.draw.polygon(self.screen, (255, 0, 0), scaled_polygon)
                 pygame.draw.aalines(self.screen, (0, 0, 0), False, scaled_polygon)
+
+    def clamp_position(self):
+        """Clamp self.position so the map (centered at pos) stays inside screen."""
+        map_width  = self.original_map_size[0] * self.scale
+        map_height = self.original_map_size[1] * self.scale
+        screen_width, screen_height = self.screen.get_size()
+
+        # Calculate allowed ranges for the map center
+        min_x = screen_width  - map_width/2
+        max_x = map_width/2
+        min_y = screen_height - map_height/2
+        max_y = map_height/2
+
+        # Clamp position (map center)
+        self.position[0] = max(min_x, min(self.position[0], max_x))
+        self.position[1] = max(min_y, min(self.position[1], max_y))
 
 
 class CreatorLoopManager:
