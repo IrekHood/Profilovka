@@ -1,6 +1,7 @@
 import json
 import os
 import random
+
 import pygame
 
 
@@ -122,16 +123,22 @@ class QuizLoopManager:
         self.SCALE_STEP = 1.4  # Scale step for zooming in and out
         self.mouse_pos = None
         self.original_map_size = [400, 400]  # 0, 0 is in the middle of the map
-        self.mode = 1
+        self.mode = 2
         self.preprocess_map_data()
+        # for mode 1 and on
         self.font = pygame.font.SysFont("Arial", 30)
         self.tested_place = None
         self.looked_at_polygons = []
         self.previous_polygons = []
         self.previous_name = None
         self.highlight_until = pygame.time.get_ticks() + 1000  # example wil expire after 1s
-        self.clicked_color = (0, 200, 0)
-        self.mouse_pressed = False
+        self.clicked_color = (50, 200, 50)
+        self.clicked = False
+        # for mode 2
+        self.input_capture = InputCapture()
+        self.input_capture.activate()  # delete after mode switching implemented
+        self.text_surface = self.font.render(self.input_capture.get_text(), True, (0, 0, 0))
+        self.background_color = (150, 150, 170)
 
     def __bool__(self):
         return self.active
@@ -171,6 +178,16 @@ class QuizLoopManager:
 
         self.clamp_position()  # to not go out of bounds
 
+        # handle text input
+        self.input_capture.handle_event(event)
+
+        # temporary mode switch     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_m:
+                if self.mode == 1: self.mode = 2
+                elif self.mode == 2: self.mode = 1
+                self.switch_modes(self.mode)
+
     def update(self, screen):
         self.looked_at_polygons = []
         self.previous_polygons = []
@@ -197,9 +214,9 @@ class QuizLoopManager:
             screen.blit(text_surface, (screen.get_width()/2 - text_surface.get_width()/2, 0))
 
             # check if the tested place is pressed
-            if pygame.mouse.get_pressed()[0] and not self.mouse_pressed:
+            if pygame.mouse.get_pressed()[0] and not self.clicked:
                 clicked = False
-                self.mouse_pressed = True
+                self.clicked = True
                 for i in self.looked_at_polygons:
                     if circle_polygon_collision(pygame.mouse.get_pos(), 10, i):
                         clicked = True
@@ -209,13 +226,52 @@ class QuizLoopManager:
                 self.tested_place = None
 
                 if clicked:
-                    self.clicked_color = (0, 200, 0)
+                    self.clicked_color = (50, 200, 50)
                 else:
                     self.clicked_color = (200, 60, 60)
 
             # reset mouse pressing
             if not pygame.mouse.get_pressed()[0]:
-                self.mouse_pressed = False
+                self.clicked = False
+
+        if self.mode == 2:
+            if self.tested_place is None:
+                self.tested_place = random.choice(self.items)
+
+            # highlight the tested place
+            for polygon in self.looked_at_polygons:
+                pygame.draw.polygon(screen, (50, 70, 150), polygon)
+
+            # draw the text box
+            if self.text_surface.get_width() < 150:
+                pygame.draw.rect(screen, self.background_color, (screen.get_width()/2 - 75, 0, 150, self.text_surface.get_height()))
+            else:
+                pygame.draw.rect(screen, self.background_color, (screen.get_width()/2 - self.text_surface.get_width()/2, 0, self.text_surface.get_width(), self.text_surface.get_height()))
+
+            # draw text
+            self.text_surface = self.font.render(self.input_capture.get_text(), True, (0, 0, 0))
+            screen.blit(self.text_surface, (screen.get_width()/2 - self.text_surface.get_width()/2, 0))
+
+            # check result after enter is pressed
+            if pygame.key.get_pressed()[pygame.K_RETURN] and not self.clicked:
+                self.clicked = True
+                text = self.input_capture.get_text()
+                self.input_capture.activate()
+
+                if text.lower() == self.tested_place.lower():
+                    self.tested_place = None
+                    self.background_color = (50, 200, 50)
+                    self.highlight_until = pygame.time.get_ticks() + 1000
+                else:
+                    self.tested_place = None
+                    self.background_color = (200, 60, 60)
+                    self.highlight_until = pygame.time.get_ticks() + 1000
+
+            if self.highlight_until < pygame.time.get_ticks():
+                self.background_color = (150, 150, 170)
+
+            if not pygame.key.get_pressed()[pygame.K_RETURN]:
+                self.clicked = False
 
     def get_visible_polygons(self):
         """
@@ -283,6 +339,12 @@ class QuizLoopManager:
                 processed_polys.append({"points": polygon, "bbox": bbox})
             data["geometry"] = processed_polys
 
+    def switch_modes(self, mode):
+        if mode == 1:
+            self.mode = 1
+        if mode == 2:
+            self.mode = 2
+            self.input_capture.activate()
 
 class CreatorLoopManager:
     def __init__(self, screen):
@@ -465,8 +527,6 @@ class InputCapture:
                 char = event.unicode
                 if char:
                     self.input_text += char
-            print(self.input_text)
-
 
 class QuizButton:
     def __init__(self, name, continent, item_l, height):
