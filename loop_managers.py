@@ -111,9 +111,10 @@ class MenuLoopManager:
 
 
 class QuizLoopManager:
-    def __init__(self, screen, world_map, quiz_info):
+    def __init__(self, screen, world_map_h, world_map_m, world_map_s, quiz_info):
         self.screen = screen
-        self.map_data = world_map
+        self.map_data = [world_map_s, world_map_m, world_map_h]
+        self.map_index = 0
         self.items = quiz_info
         self.active = True
         self.position = [1500, 0]
@@ -139,6 +140,8 @@ class QuizLoopManager:
         self.input_capture.activate()  # delete after mode switching implemented
         self.text_surface = self.font.render(self.input_capture.get_text(), True, (0, 0, 0))
         self.background_color = (150, 150, 170)
+
+
 
     def __bool__(self):
         return self.active
@@ -187,10 +190,28 @@ class QuizLoopManager:
                 if self.mode == 1: self.mode = 2
                 elif self.mode == 2: self.mode = 1
                 self.switch_modes(self.mode)
+            if event.key == pygame.K_q:
+                self.map_index += 1
+                if self.map_index > 2:
+                    self.map_index = 0
+
 
     def update(self, screen):
+
+
+        # change polygon qualyty based on zoom
+        if self.scale < 10:
+            self.map_index = 0
+        elif self.scale < 60:
+            self.map_index = 1
+        else:
+            self.map_index = 2
+
+
         self.looked_at_polygons = []
         self.previous_polygons = []
+        for scaled_polygon, name in self.get_visible_polygons():
+            pygame.draw.aalines(screen, (0, 0, 0), False, scaled_polygon)
         for scaled_polygon, name in self.get_visible_polygons():
             pygame.draw.aalines(screen, (0, 0, 0), False, scaled_polygon)
 
@@ -273,6 +294,7 @@ class QuizLoopManager:
             if not pygame.key.get_pressed()[pygame.K_RETURN]:
                 self.clicked = False
 
+
     def get_visible_polygons(self):
         """
         Yield (scaled_polygon, is_selected) for all visible polygons.
@@ -280,7 +302,7 @@ class QuizLoopManager:
         """
         screen_w, screen_h = self.screen.get_size()
 
-        for name, data in self.map_data.items():
+        for name, data in self.map_data[self.map_index].items():
             for poly in data["geometry"]:
                 points = poly["points"]
                 min_x, min_y, max_x, max_y = poly["bbox"]
@@ -328,16 +350,17 @@ class QuizLoopManager:
         Add precomputed bounding boxes to each polygon in map_data.
         Each polygon becomes a dict: {"points": [...], "bbox": (min_x, min_y, max_x, max_y)}
         """
-        for name, data in self.map_data.items():
-            processed_polys = []
-            for polygon in data["geometry"]:
-                if len(polygon) < 3:
-                    continue
-                xs = [p[0] for p in polygon]
-                ys = [p[1] for p in polygon]
-                bbox = (min(xs), min(ys), max(xs), max(ys))
-                processed_polys.append({"points": polygon, "bbox": bbox})
-            data["geometry"] = processed_polys
+        for maps in self.map_data:
+            for name, data in maps.items():
+                processed_polys = []
+                for polygon in data["geometry"]:
+                    if len(polygon) < 3:
+                        continue
+                    xs = [p[0] for p in polygon]
+                    ys = [p[1] for p in polygon]
+                    bbox = (min(xs), min(ys), max(xs), max(ys))
+                    processed_polys.append({"points": polygon, "bbox": bbox})
+                data["geometry"] = processed_polys
 
     def switch_modes(self, mode):
         if mode == 1:

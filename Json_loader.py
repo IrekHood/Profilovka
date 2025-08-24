@@ -6,12 +6,14 @@ import math
 def mercator_projection(lon, lat):
     R = 6378137  # Radius of Earth in meters
     x = R * math.radians(lon)
+    if lat == -90.0:
+        lat = -89.9
     y = R * math.log(math.tan(math.pi / 4 + math.radians(lat) / 2))
     return x/ 100000, y / 100000  # Scale down for better visualization
 
 
 # Load the shapefile
-gdf = gpd.read_file("data/Mid_quality/political/contries/ne_50m_admin_0_countries")
+gdf = gpd.read_file("data/high_quality/political/countries")
 READ_DATA = ["CONTINENT", "ADMIN", "ADM0_A3", "geometry"]
 CONTINENT = "Europe"
 
@@ -46,7 +48,7 @@ for _, row in gdf.iterrows():
 
 
 # Save the dictionary to a JSON file
-with open(f"maps/World.json", "w") as json_file:
+with open(f"maps/World_h.json", "w") as json_file:
     json.dump(data_dict, json_file, indent=4)
 
 # View the first five rows

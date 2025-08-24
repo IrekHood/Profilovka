@@ -19,7 +19,9 @@ WHITE = (255, 255, 255)
 clock = pygame.time.Clock()
 
 # Load stuff
-map_data = json.load(open("maps/World.json", "r"))
+map_data_h = json.load(open("maps/World_h.json", "r"))
+map_data_m = json.load(open("maps/World_m.json", "r"))
+map_data_s = json.load(open("maps/World_s.json", "r"))
 
 # Main game loop
 async def main():
@@ -55,7 +57,7 @@ async def main():
                 Creator_M.active = True
                 Menu_M.active = False 
             elif v[0] == 2:  # if quiz button was pressed
-                Quiz_M = QuizLoopManager(screen, map_data, v[1])
+                Quiz_M = QuizLoopManager(screen, map_data_h, map_data_m, map_data_s, v[1])
                 Menu_M.active = False
 
         if Creator_M:
