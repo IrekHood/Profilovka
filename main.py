@@ -5,7 +5,7 @@ from loop_managers import *
 pygame.init()
 
 # Screen dimensions
-WIDTH, HEIGHT = 1920, 1080
+WIDTH, HEIGHT = 1920/2, 1080/2
 
 
 # Create the screen
