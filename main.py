@@ -5,7 +5,7 @@ from loop_managers import *
 pygame.init()
 
 # Screen dimensions
-WIDTH, HEIGHT = 1920/2, 1080/2
+WIDTH, HEIGHT = 1920, 1080
 
 
 # Create the screen
@@ -50,6 +50,8 @@ async def main():
         # manage screen
         if Quiz_M:
             Quiz_M.update(screen)
+            if not Quiz_M:
+                Menu_M = MenuLoopManager(screen)
 
         if Menu_M:
             v = Menu_M.update(event.y if event.type == pygame.MOUSEWHEEL else 0)
