@@ -159,17 +159,17 @@ class QuizLoopManager:
         self.selected_place = None
         self.outlines_colors = ((200, 200, 200), (255, 200, 200), (200, 220, 255), (0, 0, 0))
         self.selected_colors = (
-    (220, 20, 60),    # crimson red
-    (34, 139, 34),    # forest green
-    (70, 130, 180),   # steel blue
-    (218, 165, 32),   # goldenrod
-    (139, 69, 19),    # saddle brown
-    (128, 0, 128),    # purple
-    (105, 105, 105),  # dim gray
-    (210, 105, 30),   # chocolate
-    (0, 128, 128),    # teal
-    (176, 196, 222),  # light steel blue
-)
+            (220, 20, 60),    # crimson red
+            (34, 139, 34),    # forest green
+            (70, 130, 180),   # steel blue
+            (218, 165, 32),   # goldenrod
+            (139, 69, 19),    # saddle brown
+            (128, 0, 128),    # purple
+            (105, 105, 105),  # dim gray
+            (210, 105, 30),   # chocolate
+            (0, 128, 128),    # teal
+            (176, 196, 222),  # light steel blue
+        )
 
 
 
@@ -229,12 +229,14 @@ class QuizLoopManager:
             self.map_index = 0
         elif self.scale < 60:
             self.map_index = 1
-        elif self.mode != 3:
+        else:
             self.map_index = 2
 
 
         self.looked_at_polygons = []
         self.previous_polygons = []
+
+        # draw all polygons
         for scaled_polygon, name in self.get_visible_polygons():
             pygame.draw.aalines(self.draw_surface, (0, 0, 0), False, scaled_polygon)
 
@@ -243,6 +245,22 @@ class QuizLoopManager:
                 self.looked_at_polygons.append(scaled_polygon)
             if name == self.previous_name:
                 self.previous_polygons.append(scaled_polygon)
+
+        # draw all lines
+        for scaled_polygon, name in self.get_visible_lines():
+            pygame.draw.aalines(self.draw_surface, (60, 60, 200), False, scaled_polygon)
+
+        # draw all body's of water
+        for scaled_polygon, name in self.get_visible_water_bodeys():
+            pygame.draw.polygon(self.draw_surface, (60, 60, 220), scaled_polygon)
+
+        # draw all cities/points
+        for scaled_point, name, rank, capital in self.get_visible_points():
+            if capital:
+                pygame.draw.aacircle(self.draw_surface, (209, 49, 245), scaled_point, 2 + self.map_index * 1.5)
+            else:
+                pygame.draw.aacircle(self.draw_surface, (0, 0, 0), scaled_point, 1 + self.map_index/2)
+
 
         if self.mode == 1:  # tests you with a random place
 
@@ -477,7 +495,7 @@ class QuizLoopManager:
             pygame.draw.rect(screen, (0, 0, 0), ((screen.get_width() - mode_text.get_width() - 40, screen.get_height() - 50), (mode_text.get_width() + 20, 45)), 4)
 
 
-        # the back
+        # the back button
         back_text = self.font.render("zpět", True, (0, 0, 0))
         pygame.draw.rect(screen, (120, 100, 100), ((10, screen.get_height() - 50), (back_text.get_width() + 20, 45)))
         screen.blit(back_text, (20, screen.get_height() - 50 + 5))
@@ -529,6 +547,91 @@ class QuizLoopManager:
                 ]
 
                 yield scaled_polygon, name
+
+    def get_visible_lines(self):
+        """
+        Yield (scaled_line, is_selected) for all visible polygons.
+        Uses precomputed bounding boxes for fast rejection.
+        """
+        screen_w, screen_h = self.screen.get_size()
+
+        for name, data in self.map_data[self.map_index]["lines"].items():
+            for line in data["geometry"]:
+                points = line["points"]
+                min_x, min_y, max_x, max_y = line["bbox"]
+
+                # Scale + translate bbox
+                scaled_min_x = min_x * self.scale + self.position[0]
+                scaled_max_x = max_x * self.scale + self.position[0]
+                scaled_min_y = -max_y * self.scale + self.position[1]  # note: Y flipped
+                scaled_max_y = -min_y * self.scale + self.position[1]
+
+                # Quick reject: check if bbox overlaps screen
+                if scaled_max_x < 0 or scaled_min_x > screen_w or scaled_max_y < 0 or scaled_min_y > screen_h:
+                    continue
+
+                # Only scale full lines if visible
+                scaled_line = [
+                    (x * self.scale + self.position[0], -y * self.scale + self.position[1])
+                    for x, y in points
+                ]
+
+                yield scaled_line, name
+
+    def get_visible_water_bodeys(self):
+        """
+        Yield (scaled_polygon, is_selected) for all visible polygons.
+        Uses precomputed bounding boxes for fast rejection.
+        """
+        screen_w, screen_h = self.screen.get_size()
+
+        for name, data in self.map_data[self.map_index]["blue_polygons"].items():
+            for poly in data["geometry"]:
+                points = poly["points"]
+                min_x, min_y, max_x, max_y = poly["bbox"]
+
+                # Scale + translate bbox
+                scaled_min_x = min_x * self.scale + self.position[0]
+                scaled_max_x = max_x * self.scale + self.position[0]
+                scaled_min_y = -max_y * self.scale + self.position[1]  # note: Y flipped
+                scaled_max_y = -min_y * self.scale + self.position[1]
+
+                # Quick reject: check if bbox overlaps screen
+                if scaled_max_x < 0 or scaled_min_x > screen_w or scaled_max_y < 0 or scaled_min_y > screen_h:
+                    continue
+
+                # Too small? (bounding box dimensions after scaling)
+                if (scaled_max_x - scaled_min_x) < 2 or (scaled_max_y - scaled_min_y) < 2:
+                    continue
+
+                # Only scale full polygon if visible
+                scaled_polygon = [
+                    (x * self.scale + self.position[0], -y * self.scale + self.position[1])
+                    for x, y in points
+                ]
+
+                yield scaled_polygon, name
+
+    def get_visible_points(self):
+
+        screen_w, screen_h = self.screen.get_size()
+
+        for name, data in self.map_data[self.map_index]["points"].items():
+            # Scale + translate bbox
+            scaled_x = data["geometry"][0] * self.scale + self.position[0]
+            scaled_y = -data["geometry"][1] * self.scale + self.position[1]  # note: Y flipped
+
+            # Quick reject: check if bbox overlaps screen
+            if scaled_x < 0 or scaled_x > screen_w or scaled_y < 0 or scaled_y > screen_h:
+                continue
+
+            # reject if city has low importance
+            if self.map_index == 0 and not data["capital"] and data["rank"] < 9:
+                continue
+            if self.map_index == 1 and not data["capital"] and data["rank"] < 8:
+                continue
+
+            yield (scaled_x, scaled_y), name, data["rank"], data["capital"]
 
     def clamp_position(self):
         """Clamp self.position so the map (centered at pos) stays inside screen."""
