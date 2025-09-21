@@ -179,7 +179,7 @@ class QuizLoopManager:
     def input(self, event):
 
         # scale changes
-        if event.type == pygame.MOUSEWHEEL and pygame.rect.Rect(self.screen_offset, self.draw_surface.size).collidepoint(pygame.mouse.get_pos()):
+        if event.type == pygame.MOUSEWHEEL and pygame.rect.Rect(self.screen_offset, (self.draw_surface.get_width(), self.draw_surface.get_height())).collidepoint(pygame.mouse.get_pos()):
             mouse_x, mouse_y = pygame.mouse.get_pos()[0] - self.screen_offset[0], pygame.mouse.get_pos()[1] - self.screen_offset[1]
             if event.y > 0 and not self.scale * self.SCALE_STEP > self.MAX_SCALE:  # Zoom in
                 self.position = [
@@ -197,7 +197,7 @@ class QuizLoopManager:
         self.clamp_position()  # to not go out of bounds
 
         # moving the map
-        if pygame.mouse.get_pressed()[2] and pygame.rect.Rect(self.screen_offset, self.draw_surface.size).collidepoint(pygame.mouse.get_pos()):
+        if pygame.mouse.get_pressed()[2] and pygame.rect.Rect(self.screen_offset, (self.draw_surface.get_width(), self.draw_surface.get_height())).collidepoint(pygame.mouse.get_pos()):
             if self.mouse_pos is None:
                 self.mouse_pos = pygame.mouse.get_pos()
             else:
@@ -257,9 +257,9 @@ class QuizLoopManager:
         # draw all cities/points
         for scaled_point, name, rank, capital in self.get_visible_points():
             if capital:
-                pygame.draw.aacircle(self.draw_surface, (209, 49, 245), scaled_point, 2 + self.map_index * 1.5)
+                pygame.draw.circle(self.draw_surface, (209, 49, 245), scaled_point, 2 + self.map_index * 1.5)
             else:
-                pygame.draw.aacircle(self.draw_surface, (0, 0, 0), scaled_point, 1 + self.map_index/2)
+                pygame.draw.circle(self.draw_surface, (0, 0, 0), scaled_point, 1 + self.map_index/2)
 
 
         if self.mode == 1:  # tests you with a random place
@@ -470,9 +470,9 @@ class QuizLoopManager:
                 self.clicked = False
 
 
-        self.draw_surface.blit(self.highlight_surface)
+        self.draw_surface.blit(self.highlight_surface, (0, 0))
         screen.blit(self.draw_surface, self.screen_offset)  # draws the map onto the display surface
-        screen.blit(self.answer_surface)
+        screen.blit(self.answer_surface, (0, 0))
 
         # the change modes button
         mode_text = self.font.render(self.mode_names[self.mode-1], True, (0, 0, 0))
