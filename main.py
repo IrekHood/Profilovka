@@ -30,6 +30,7 @@ async def main():
     Quiz_M = None
     Menu_M = MenuLoopManager(screen)
     Creator_M = CreatorLoopManager(screen)
+    Term_M = None
 
     running = True
     while running:
@@ -43,6 +44,8 @@ async def main():
                 Creator_M.input_capture.handle_event(event)
             if Quiz_M:
                 Quiz_M.input(event)
+            if Term_M:
+                Term_M.input(event)
 
         # Fill the screen with white
         screen.fill(WHITE)
@@ -62,10 +65,21 @@ async def main():
                 Quiz_M = QuizLoopManager(screen, map_data_h, map_data_m, map_data_s, v[1])
                 Menu_M.active = False
 
+        if Term_M:
+            if not Term_M.update(screen):
+                Creator_M.active = True
+                Creator_M.objects = json.load(open("maps/terms.json", 'r'))
+                Term_M.active = False
+
         if Creator_M:
-            if not Creator_M.update():
-                Creator_M.active = False
-                Menu_M = MenuLoopManager(screen)
+            out = Creator_M.update()
+            if not out[0]:
+                if out[1]:
+                    Creator_M.active = False
+                    Term_M = Term_Creator_Manager(screen, map_data_h, map_data_m, map_data_s, None)
+                else:
+                    Creator_M.active = False
+                    Menu_M = MenuLoopManager(screen)
 
         # Update the display
         pygame.display.flip()

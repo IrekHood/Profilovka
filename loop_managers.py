@@ -99,6 +99,17 @@ def circle_point_collision(circle_center, circle_radius, point_pos):
         return True
     return False
 
+def preprocess_map_data(map_data):
+    """
+    Add precomputed bounding boxes to each polygon in map_data.
+    Each polygon becomes a dict: {"points": [...], "bbox": (min_x, min_y, max_x, max_y)}
+    """
+    polygon = map_data["geometry"]
+    xs = [p[0] for p in polygon]
+    ys = [p[1] for p in polygon]
+    bbox = (min(xs), min(ys), max(xs), max(ys))
+    map_data["geometry"] = [{"points": polygon, "bbox": bbox}]
+
 
 class MenuLoopManager:
     def __init__(self, screen):
@@ -170,7 +181,6 @@ class QuizLoopManager:
         self.map_data = [world_map_s, world_map_m, world_map_h]
         self.map_index = 0
         self.items = quiz_info
-        print(self.items)
         self.active = True
         self.position = [1500, 0]
         self.scale = 7
@@ -192,7 +202,6 @@ class QuizLoopManager:
         self.clicked = False
         # for mode 2
         self.input_capture = InputCapture()
-        self.input_capture.activate()  # delete after mode switching implemented
         self.text_surface = self.font.render(self.input_capture.get_text(), True, (0, 0, 0))
         self.background_color = (150, 150, 170)
         # for mode 3
@@ -217,8 +226,6 @@ class QuizLoopManager:
             (0, 128, 128),    # teal
             (176, 196, 222),  # light steel blue
         )
-
-
 
     def __bool__(self):
         return self.active
@@ -306,7 +313,7 @@ class QuizLoopManager:
             if self.previous_term and self.highlight_until > pygame.time.get_ticks():
                 if self.previous_term[0] == "points":
                     pos = self.map_data[2][self.previous_term[0]][self.previous_term[1]]["geometry"]
-                    pygame.draw.aacircle(self.draw_surface, self.clicked_color, self.scale_point(pos[0], pos[1]), 5)
+                    pygame.draw.circle(self.draw_surface, self.clicked_color, self.scale_point(pos[0], pos[1]), 5)
                 elif self.previous_term[0] == "lines":
                     lines = [i["points"] for i in self.map_data[2][self.previous_term[0]][self.previous_term[1]]["geometry"]]
                     for points in lines:
@@ -367,7 +374,7 @@ class QuizLoopManager:
             if self.tested_place:
                 if self.tested_place[0] == "points":
                     pos = self.map_data[2][self.tested_place[0]][self.tested_place[1]]["geometry"]
-                    pygame.draw.aacircle(self.draw_surface, (50, 70, 150), self.scale_point(pos[0], pos[1]), 5)
+                    pygame.draw.circle(self.draw_surface, (50, 70, 150), self.scale_point(pos[0], pos[1]), 5)
                 elif self.tested_place[0] == "lines":
                     lines = [i["points"] for i in
                              self.map_data[2][self.tested_place[0]][self.tested_place[1]]["geometry"]]
@@ -504,7 +511,7 @@ class QuizLoopManager:
                     continue
                 if place[0] == "points":
                     pos = self.map_data[2][place[0]][place[1]]["geometry"]
-                    pygame.draw.aacircle(self.highlight_surface, self.selected_colors[i], self.scale_point(pos[0], pos[1]), 5)
+                    pygame.draw.circle(self.highlight_surface, self.selected_colors[i], self.scale_point(pos[0], pos[1]), 5)
                 elif place[0] == "lines":
                     lines = [i["points"] for i in
                              self.map_data[2][place[0]][place[1]]["geometry"]]
@@ -519,7 +526,7 @@ class QuizLoopManager:
                 if i == self.selected_place:
                     if place[0] == "points":
                         pos = self.map_data[2][place[0]][place[1]]["geometry"]
-                        pygame.draw.aacircle(self.draw_surface, "black",
+                        pygame.draw.circle(self.draw_surface, "black",
                                              self.scale_point(pos[0], pos[1]), 7)
                     else:
                         lines = [i["points"] for i in
@@ -535,7 +542,7 @@ class QuizLoopManager:
                 if place:
                     if place[0] == "points":
                         pos = self.map_data[2][place[0]][place[1]]["geometry"]
-                        pygame.draw.aacircle(self.highlight_surface, self.selected_colors[i], self.scale_point(pos[0], pos[1]), 5)
+                        pygame.draw.circle(self.highlight_surface, self.selected_colors[i], self.scale_point(pos[0], pos[1]), 5)
                     elif place[0] == "lines":
                         lines = [i["points"] for i in
                                  self.map_data[2][place[0]][place[1]]["geometry"]]
@@ -619,7 +626,6 @@ class QuizLoopManager:
                     self.mode = 3
                 elif self.mode == 3:
                     self.mode = 1
-                print(self.mode)
                 self.switch_modes(self.mode)
             else:
                 pygame.draw.rect(screen, (140, 140, 160), ((screen.get_width() - mode_text.get_width() - 40, screen.get_height() - 50), (mode_text.get_width() + 20, 45)), 4)
@@ -744,7 +750,6 @@ class QuizLoopManager:
                 continue
 
             yield (scaled_x, scaled_y), name, data["rank"], data["capital"]
-
 
     def clamp_position(self):
         """Clamp self.position so the map (centered at pos) stays inside screen."""
@@ -892,6 +897,24 @@ class CreatorLoopManager:
         text = self.font.render(self.object_text, True, (0, 0, 0))
         self.screen.blit(text, (self.screen.get_width()/3 + thickness + self.padding * 2, 20 + thickness + self.padding + 250 + self.padding * 3))
 
+        # new term btton
+        trm_txt = self.font.render("Nový pojem", True, (0, 0, 0))
+        trm_rect = pygame.rect.Rect(self.screen.get_width()/3 + thickness + self.padding, 20 + thickness + self.padding + 310 + self.padding * 2, self.screen.get_width()/3 - thickness * 2 - self.padding * 2, 60)
+        pygame.draw.rect(self.screen, (120, 100, 100), trm_rect)
+
+        self.screen.blit(trm_txt, (self.screen.get_width()/2 - trm_txt.get_width()/2, 20 + thickness + self.padding + 320 + self.padding * 2))
+
+        if trm_rect.collidepoint(pygame.mouse.get_pos()):
+            if pygame.mouse.get_pressed()[0]:
+                pygame.draw.rect(self.screen, (100, 100, 200), trm_rect, int(thickness/3) + 1)
+                return False, True
+            else:
+                pygame.draw.rect(self.screen, (140, 140, 160), trm_rect, int(thickness/3) + 1)
+        else:
+            pygame.draw.rect(self.screen, (0, 0, 0), trm_rect, int(thickness/3) + 1)
+
+
+
         # my objects list
         if len(self.my_objects):
             i = 0
@@ -928,7 +951,7 @@ class CreatorLoopManager:
                        "items": self.my_objects}
                 with open("maps/learning_sets/" + self.name + ".json", "w") as outfile:
                     outfile.write(json.dumps(out))
-                    return False
+                    return False, False
 
         else:
             pygame.draw.rect(self.screen, (50, 50, 50), exp_rec, int(thickness / 3) + 1)
@@ -948,7 +971,206 @@ class CreatorLoopManager:
             if obj_rec.collidepoint(pygame.mouse.get_pos()):
                 self.change_input_goal(3)
 
+        return True, False
+
+
+class Term_Creator_Manager(QuizLoopManager):
+    def __init__(self, screen, world_map_h, world_map_m, world_map_s, quiz_info):
+        QuizLoopManager.__init__(self, screen, world_map_h, world_map_m, world_map_s, quiz_info)
+        self.screen_offset = [0, 70]
+        self.new_term = [[], False]
+        self.term_name = ""
+        self.input_capture.activate()
+        self.enter_text = self.font.render("Potvrdit", True, (0, 0, 0))
+
+    def update(self, screen):
+        # clear the draw surface
+        self.draw_surface.fill((255, 255, 255))
+        self.highlight_surface.fill((0, 0, 0, 0))
+
+        # change polygon qualyty based on zoom
+        if self.scale < 10:
+            self.map_index = 0
+        elif self.scale < 60:
+            self.map_index = 1
+        else:
+            self.map_index = 2
+
+        # draw all polygons
+        for scaled_polygon, name in self.get_visible_polygons():
+            pygame.draw.aalines(self.draw_surface, (0, 0, 0), False, scaled_polygon)
+
+
+        # creating a new term logic
+        """
+        works like this:
+        [[...], False] - list of points + closed bool
+        if only one point in list - draw point
+        if two or more points in list - draw line ending in mouse
+        if the bool is True draw a closed polygon, ignore mouse
+        
+        """
+
+        # adding point logic
+        if pygame.mouse.get_pressed()[0] and self.clicked and pygame.rect.Rect(self.screen_offset, self.draw_surface.get_size()).collidepoint(pygame.mouse.get_pos()):
+            self.clicked = False
+            pos = list(pygame.mouse.get_pos())
+            pos[1] -= self.screen_offset[1]
+            if self.new_term[0] and circle_point_collision(pos, 10, self.scale_point(self.new_term[0][0][0], self.new_term[0][0][1])):
+                self.new_term[1] = True
+            elif not self.new_term[1]:
+                pos = self.unscale_point(pos)
+                self.new_term[0].append(pos)
+        # remove point logic
+        if pygame.mouse.get_pressed()[1] and self.clicked and self.new_term[0]:
+            self.clicked = False
+            if self.new_term[1]:
+                self.new_term[1] = False
+            else:
+                self.new_term[0].pop()
+
+        if not pygame.mouse.get_pressed()[0] and not pygame.mouse.get_pressed()[1]:
+            self.clicked = True
+
+        # draw points logic
+        if len(self.new_term[0]) == 1:
+            pygame.draw.circle(self.draw_surface, (0, 255, 255), self.scale_point(self.new_term[0][0][0], self.new_term[0][0][1]), 5)
+        if len(self.new_term[0]) > 1:
+            mouse = list(pygame.mouse.get_pos())
+            mouse[1] -= self.screen_offset[1]
+            if self.new_term[1]:
+                pygame.draw.polygon(self.draw_surface, (0, 255, 255), self.scale_points(self.new_term[0]))
+            elif circle_point_collision(mouse, 10, self.scale_point(self.new_term[0][0][0], self.new_term[0][0][1])):
+                pygame.draw.aalines(self.draw_surface, (0, 255, 255), True, self.scale_points(self.new_term[0]))
+            else:
+                line = self.new_term[0].copy()
+
+                mouse = self.unscale_point(mouse)
+                line.append(mouse)
+                pygame.draw.aalines(self.draw_surface, (0, 255, 255), False, self.scale_points(line))
+
+
+        # fill the screen
+        screen.fill((160, 160, 170))
+
+
+        # drawing text box
+        self.term_name = self.input_capture.get_text()
+        text = self.font.render(self.term_name, True, (0, 0, 0))
+        screen.blit(text, (screen.get_width()/2 - text.get_width()/2, 10))
+
+        # drawing enter button
+        but_rect = pygame.rect.Rect(10, 10, self.enter_text.get_width() + 20, self.enter_text.get_height() + 10)
+        pygame.draw.rect(screen, (120, 100, 100), but_rect)
+        screen.blit(self.enter_text, (20, 15))
+        if but_rect.collidepoint(pygame.mouse.get_pos()):
+            if pygame.mouse.get_pressed()[0]:
+                pygame.draw.rect(screen, (100, 100, 200), (10, 10, self.enter_text.get_width() + 20, self.enter_text.get_height() + 10), 4)
+                self.save_term()
+                return False
+            else:
+                pygame.draw.rect(screen, (140, 140, 160),(10, 10, self.enter_text.get_width() + 20, self.enter_text.get_height() + 10), 4)
+        else:
+            pygame.draw.rect(screen, (0, 0, 0), (10, 10, self.enter_text.get_width() + 20, self.enter_text.get_height() + 10), 4)
+
+
+
+        screen.blit(self.draw_surface, self.screen_offset)
+
         return True
+
+    def unscale_point(self, point):
+        return (point[0] - self.position[0]) / self.scale, -((point[1] - self.position[1]) / self.scale)
+
+    def save_term(self):
+        if len(self.new_term[0]) == 1:  # cities
+            dict = {"geometry": tuple(self.new_term[0][0]),
+                    "rank": 2,
+                    "capital": False
+                    }
+            with open("maps/World_h.json", "r") as h:
+                data_h = json.load(h)
+            with open("maps/World_m.json", "r") as m:
+                data_m = json.load(m)
+            with open("maps/World_s.json", "r") as s:
+                data_s = json.load(s)
+            with open("maps/terms.json", "r") as t:
+                data_t = json.load(t)
+
+            data_s["points"][self.term_name] = dict
+            data_m["points"][self.term_name] = dict
+            data_h["points"][self.term_name] = dict
+            data_t["points"].append(self.term_name)
+
+            with open("maps/World_h.json", "w") as h:
+                json.dump(data_h, h, indent=4)
+            with open("maps/World_m.json", "w") as m:
+                json.dump(data_m, m, indent=4)
+            with open("maps/World_s.json", "w") as s:
+                json.dump(data_s, s, indent=4)
+
+            with open("maps/terms.json", "w") as t:
+                json.dump(data_t, t)
+
+
+        if len(self.new_term[0]) > 1 and self.new_term[1]: # polygons
+            self.new_term[0].append(self.new_term[0][0])
+            dict = {"geometry": tuple(self.new_term[0])}
+            with open("maps/World_h.json", "r") as h:
+                data_h = json.load(h)
+            with open("maps/World_m.json", "r") as m:
+                data_m = json.load(m)
+            with open("maps/World_s.json", "r") as s:
+                data_s = json.load(s)
+            with open("maps/terms.json", "r") as t:
+                data_t = json.load(t)
+
+            preprocess_map_data(dict)
+
+            data_s["polygons"][self.term_name] = dict
+            data_m["polygons"][self.term_name] = dict
+            data_h["polygons"][self.term_name] = dict
+            data_t["polygons"].append(self.term_name)
+
+            with open("maps/World_h.json", "w") as h:
+                json.dump(data_h, h, indent=4)
+            with open("maps/World_m.json", "w") as m:
+                json.dump(data_m, m, indent=4)
+            with open("maps/World_s.json", "w") as s:
+                json.dump(data_s, s, indent=4)
+
+            with open("maps/terms.json", "w") as t:
+                json.dump(data_t, t)
+
+        if len(self.new_term[0]) > 1 and not self.new_term[1]: # lines
+
+            dict = {"geometry": tuple(self.new_term[0])}
+
+            with open("maps/World_h.json", "r") as h:
+                data_h = json.load(h)
+            with open("maps/World_m.json", "r") as m:
+                data_m = json.load(m)
+            with open("maps/World_s.json", "r") as s:
+                data_s = json.load(s)
+            with open("maps/terms.json", "r") as t:
+                data_t = json.load(t)
+
+            preprocess_map_data(dict)
+
+            data_s["lines"][self.term_name] = dict
+            data_m["lines"][self.term_name] = dict
+            data_h["lines"][self.term_name] = dict
+            data_t["lines"].append(self.term_name)
+
+            with open("maps/World_h.json", "w") as h:
+                json.dump(data_h, h, indent=4)
+            with open("maps/World_m.json", "w") as m:
+                json.dump(data_m, m, indent=4)
+            with open("maps/World_s.json", "w") as s:
+                json.dump(data_s, s, indent=4)
+
+            with open("maps/terms.json", "w") as t:
+                json.dump(data_t, t)
 
 
 class InputCapture:
