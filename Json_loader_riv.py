@@ -13,7 +13,7 @@ def mercator_projection(lon, lat):
 
 
 # Load the shapefile
-gdf = gpd.read_file("data/high_quality/physical/ne_10m_rivers_lake_centerlines")
+gdf = gpd.read_file("data/low_quality/physical/ne_110m_rivers_lake_centerlines")
 gdf = gdf.dissolve(by="name_en").reset_index()
 READ_DATA = ["name_en", "geometry"]
 print(gdf.head())  # View the first five rows
@@ -24,7 +24,7 @@ gdf = gdf.reset_index(drop=True)
 
 # load the json
 # Load the original JSON
-with open("maps/World_h.json", "r") as f:
+with open("maps/World_s.json", "r") as f:
     data = json.load(f)
 
 
@@ -75,7 +75,7 @@ out = {"lines": data_dict}
 data["lines"] = data_dict
 
 # Save the dictionary to a JSON file
-with open(f"maps/World_h.json", "w") as json_file:
+with open(f"maps/World_s.json", "w") as json_file:
     json.dump(data, json_file, indent=4)
 
 # View the first five rows

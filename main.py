@@ -18,13 +18,14 @@ WHITE = (255, 255, 255)
 # Clock for controlling the frame rate
 clock = pygame.time.Clock()
 
-# Load stuff
-map_data_h = json.load(open("maps/World_h.json", "r"))
-map_data_m = json.load(open("maps/World_m.json", "r"))
-map_data_s = json.load(open("maps/World_s.json", "r"))
 
 # Main game loop
 async def main():
+
+    # Load stuff
+    map_data_h = json.load(open("maps/World_h.json", "r"))
+    map_data_m = json.load(open("maps/World_m.json", "r"))
+    map_data_s = json.load(open("maps/World_s.json", "r"))
 
     # settup managers
     Quiz_M = None
@@ -79,6 +80,10 @@ async def main():
                     Term_M = Term_Creator_Manager(screen, map_data_h, map_data_m, map_data_s, None)
                 else:
                     Creator_M.active = False
+                    # Load stuff
+                    map_data_h = json.load(open("maps/World_h.json", "r"))
+                    map_data_m = json.load(open("maps/World_m.json", "r"))
+                    map_data_s = json.load(open("maps/World_s.json", "r"))
                     Menu_M = MenuLoopManager(screen)
 
         # Update the display

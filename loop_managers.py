@@ -187,6 +187,7 @@ class QuizLoopManager:
         self.MAX_SCALE = 300  # Maximum scale factor
         self.MIN_SCALE = 5  # Minimum scale factor
         self.SCALE_STEP = 1.4  # Scale step for zooming in and out
+        self.scaling = False
         self.mouse_pos = None
         self.original_map_size = [400, 400]  # 0, 0 is in the middle of the map
         self.mode = 1
@@ -247,6 +248,7 @@ class QuizLoopManager:
                     mouse_y - (mouse_y - self.position[1]) / self.SCALE_STEP,
                 ]
                 self.scale /= self.SCALE_STEP
+            self.scaling = True
 
         self.clamp_position()  # to not go out of bounds
 
@@ -274,10 +276,6 @@ class QuizLoopManager:
 
     def update(self, screen):
 
-        # clear the draw surface
-        self.draw_surface.fill((255, 255, 255))
-        self.highlight_surface.fill((0, 0, 0, 0))
-
         # change polygon qualyty based on zoom
         if self.scale < 10:
             self.map_index = 0
@@ -286,25 +284,36 @@ class QuizLoopManager:
         else:
             self.map_index = 2
 
+        # redraw the map if scaling
+        if self.scaling:
+            # clear the draw surface
+            self.draw_surface.fill((100, 100, 255))
+            self.highlight_surface.fill((0, 0, 0, 0))
 
-        # draw all polygons
-        for scaled_polygon, name in self.get_visible_polygons():
-            pygame.draw.aalines(self.draw_surface, (0, 0, 0), False, scaled_polygon)
+            # draw all polygons
+            for scaled_polygon, name in self.get_visible_polygons():
+                pygame.draw.polygon(self.draw_surface, (100, 155, 100), scaled_polygon)
+                pygame.draw.aalines(self.draw_surface, (0, 0, 0), False, scaled_polygon)
 
-        # draw all lines
-        for scaled_polygon, name in self.get_visible_lines():
-            pygame.draw.aalines(self.draw_surface, (60, 60, 200), False, scaled_polygon)
+            # draw all lines
+            for scaled_polygon, name in self.get_visible_lines():
+                pygame.draw.aalines(self.draw_surface, (60, 60, 200), False, scaled_polygon)
 
-        # draw all body's of water
-        for scaled_polygon, name in self.get_visible_water_bodeys():
-            pygame.draw.polygon(self.draw_surface, (60, 60, 220), scaled_polygon)
+            # draw all body's of water
+            for scaled_polygon, name in self.get_visible_water_bodeys():
+                pygame.draw.polygon(self.draw_surface, (60, 60, 220), scaled_polygon)
 
-        # draw all cities/points
-        for scaled_point, name, rank, capital in self.get_visible_points():
-            if capital:
-                pygame.draw.circle(self.draw_surface, (209, 49, 245), scaled_point, 2 + self.map_index * 1.5)
-            else:
-                pygame.draw.circle(self.draw_surface, (0, 0, 0), scaled_point, 1 + self.map_index/2)
+            # draw all cities/points
+            for scaled_point, name, rank, capital in self.get_visible_points():
+                if capital:
+                    pygame.draw.circle(self.draw_surface, (209, 49, 245), scaled_point, 2 + self.map_index * 1.5)
+                else:
+                    pygame.draw.circle(self.draw_surface, (0, 0, 0), scaled_point, 1 + self.map_index/2)
+
+            # draw all custom made polygons
+            for scaled_polygon, name in self.get_visible_custom_polygons():
+                pygame.draw.polygon(self.highlight_surface, (100, 100, 100), scaled_polygon)
+                pygame.draw.aalines(self.draw_surface, (0, 0, 0), False, scaled_polygon)
 
 
         if self.mode == 1:  # tests you with a random place
@@ -463,6 +472,9 @@ class QuizLoopManager:
                 for pol, name in self.get_visible_water_bodeys():
                     if circle_polygon_collision(mouse_pos, 10, pol):
                         intersect_list.append({"blue_polygons": name})
+                for pol, name in self.get_visible_custom_polygons():
+                    if circle_polygon_collision(mouse_pos, 10, pol):
+                        intersect_list.append({"new_polygons": name})
                 for pol, name in self.get_visible_polygons():
                     if circle_polygon_collision(mouse_pos, 10, pol):
                         intersect_list.append({"polygons": name})
@@ -574,7 +586,6 @@ class QuizLoopManager:
                             pygame.draw.rect(self.answer_surface, (250, 100, 100), ((screen.get_width() - 60, self.button_begin_point + 60 * i), (50, 50)))
 
                     for i in range(5, 10):
-                        print(self.answered_places[i])
                         if self.answered_places[i] is not None and self.answered_places[i].lower() == self.tested_places[i][1].lower():
                             pygame.draw.rect(self.answer_surface, (100, 250, 100), ((screen.get_width() - 60, self.button_begin_point + 60 * i + self.second_row_difference), (50, 50)))
                         else:
@@ -608,7 +619,9 @@ class QuizLoopManager:
                 self.clicked = False
 
 
-        self.draw_surface.blit(self.highlight_surface, (0, 0))
+        if self.scaling:
+            self.draw_surface.blit(self.highlight_surface, (0, 0))
+        print(self.scale)
         screen.blit(self.draw_surface, self.screen_offset)  # draws the map onto the display surface
         screen.blit(self.answer_surface, (0, 0))
 
@@ -649,6 +662,9 @@ class QuizLoopManager:
 
         if self.mode_clicked and not pygame.mouse.get_pressed()[0]:
             self.mode_clicked = False
+
+        print(self.scaling)
+        self.scaling = False # is true on the frames, where is mousewheel is wheeld
 
     def scale_point(self, x, y):
         """Scale and translate a single point to screen coordinates."""
@@ -751,6 +767,26 @@ class QuizLoopManager:
 
             yield (scaled_x, scaled_y), name, data["rank"], data["capital"]
 
+    def get_visible_custom_polygons(self):
+        screen_w, screen_h = self.screen.get_size()
+
+        for name, data in self.map_data[self.map_index]["new_polygons"].items():
+            for poly in data["geometry"]:
+                scaled_min_x, scaled_min_y, scaled_max_x, scaled_max_y = self.scale_bbox(poly["bbox"])
+
+                # Quick reject: check if bbox overlaps screen
+                if scaled_max_x < 0 or scaled_min_x > screen_w or scaled_max_y < 0 or scaled_min_y > screen_h:
+                    continue
+
+                # Too small after scaling
+                if (scaled_max_x - scaled_min_x) < 2 or (scaled_max_y - scaled_min_y) < 2:
+                    continue
+
+                scaled_polygon = self.scale_points(poly["points"])
+                yield scaled_polygon, name
+
+
+
     def clamp_position(self):
         """Clamp self.position so the map (centered at pos) stays inside screen."""
         map_width = self.original_map_size[0] * self.scale
@@ -809,7 +845,8 @@ class CreatorLoopManager:
         self.my_objects = {"polygons": [],
                            "blue_polygons": [],
                            "points": [],
-                           "lines": []}
+                           "lines": [],
+                           "new_polygons": []}
         self.object_text = ""
         self.input_capture = InputCapture()
         self.input_active = 0
@@ -985,7 +1022,7 @@ class Term_Creator_Manager(QuizLoopManager):
 
     def update(self, screen):
         # clear the draw surface
-        self.draw_surface.fill((255, 255, 255))
+        self.draw_surface.fill((100, 100, 255))
         self.highlight_surface.fill((0, 0, 0, 0))
 
         # change polygon qualyty based on zoom
@@ -1051,7 +1088,7 @@ class Term_Creator_Manager(QuizLoopManager):
 
 
         # fill the screen
-        screen.fill((160, 160, 170))
+        ((160, 160, 170))
 
 
         # drawing text box
@@ -1127,10 +1164,10 @@ class Term_Creator_Manager(QuizLoopManager):
 
             preprocess_map_data(dict)
 
-            data_s["polygons"][self.term_name] = dict
-            data_m["polygons"][self.term_name] = dict
-            data_h["polygons"][self.term_name] = dict
-            data_t["polygons"].append(self.term_name)
+            data_s["new_polygons"][self.term_name] = dict
+            data_m["new_polygons"][self.term_name] = dict
+            data_h["new_polygons"][self.term_name] = dict
+            data_t["new_polygons"].append(self.term_name)
 
             with open("maps/World_h.json", "w") as h:
                 json.dump(data_h, h, indent=4)
