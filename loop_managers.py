@@ -187,7 +187,6 @@ class QuizLoopManager:
         self.MAX_SCALE = 300  # Maximum scale factor
         self.MIN_SCALE = 5  # Minimum scale factor
         self.SCALE_STEP = 1.4  # Scale step for zooming in and out
-        self.scaling = False
         self.mouse_pos = None
         self.original_map_size = [400, 400]  # 0, 0 is in the middle of the map
         self.mode = 1
@@ -276,6 +275,10 @@ class QuizLoopManager:
 
     def update(self, screen):
 
+        # clear the draw surface
+        self.draw_surface.fill((100, 100, 255))
+        self.highlight_surface.fill((0, 0, 0, 0))
+
         # change polygon qualyty based on zoom
         if self.scale < 10:
             self.map_index = 0
@@ -284,36 +287,30 @@ class QuizLoopManager:
         else:
             self.map_index = 2
 
-        # redraw the map if scaling
-        if self.scaling:
-            # clear the draw surface
-            self.draw_surface.fill((100, 100, 255))
-            self.highlight_surface.fill((0, 0, 0, 0))
 
-            # draw all polygons
-            for scaled_polygon, name in self.get_visible_polygons():
-                pygame.draw.polygon(self.draw_surface, (100, 155, 100), scaled_polygon)
-                pygame.draw.aalines(self.draw_surface, (0, 0, 0), False, scaled_polygon)
+        # draw all polygons
+        for scaled_polygon, name in self.get_visible_polygons():
+            pygame.draw.polygon(self.draw_surface, (100, 155, 100), scaled_polygon)
+            pygame.draw.aalines(self.draw_surface, (0, 0, 0), False, scaled_polygon)
 
-            # draw all lines
-            for scaled_polygon, name in self.get_visible_lines():
-                pygame.draw.aalines(self.draw_surface, (60, 60, 200), False, scaled_polygon)
+        # draw all lines
+        for scaled_polygon, name in self.get_visible_lines():
+            pygame.draw.aalines(self.draw_surface, (60, 60, 200), False, scaled_polygon)
 
-            # draw all body's of water
-            for scaled_polygon, name in self.get_visible_water_bodeys():
-                pygame.draw.polygon(self.draw_surface, (60, 60, 220), scaled_polygon)
+        # draw all body's of water
+        for scaled_polygon, name in self.get_visible_water_bodeys():
+            pygame.draw.polygon(self.draw_surface, (60, 60, 220), scaled_polygon)
 
-            # draw all cities/points
-            for scaled_point, name, rank, capital in self.get_visible_points():
-                if capital:
-                    pygame.draw.circle(self.draw_surface, (209, 49, 245), scaled_point, 2 + self.map_index * 1.5)
-                else:
-                    pygame.draw.circle(self.draw_surface, (0, 0, 0), scaled_point, 1 + self.map_index/2)
+        # draw all cities/points
+        for scaled_point, name, rank, capital in self.get_visible_points():
+            if capital:
+                pygame.draw.circle(self.draw_surface, (209, 49, 245), scaled_point, 2 + self.map_index * 1.5)
+            else:
+                pygame.draw.circle(self.draw_surface, (0, 0, 0), scaled_point, 1 + self.map_index/2)
 
-            # draw all custom made polygons
-            for scaled_polygon, name in self.get_visible_custom_polygons():
-                pygame.draw.polygon(self.highlight_surface, (100, 100, 100), scaled_polygon)
-                pygame.draw.aalines(self.draw_surface, (0, 0, 0), False, scaled_polygon)
+        for scaled_polygon, name in self.get_visible_custom_polygons():
+            pygame.draw.polygon(self.highlight_surface, (100, 100, 100), scaled_polygon)
+            pygame.draw.aalines(self.draw_surface, (0, 0, 0), False, scaled_polygon)
 
 
         if self.mode == 1:  # tests you with a random place
@@ -609,6 +606,7 @@ class QuizLoopManager:
                     self.clicked = True
                     pygame.draw.rect(screen, (100, 100, 200), ((220, 10), (110, 45)), 4)
                     self.switch_modes(3)
+                    self.answered_places = [None, None, None, None, None, None, None, None, None, None]
                     self.answer_surface = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
                 else:
                     pygame.draw.rect(screen, (140, 140, 160), ((220, 10), (110, 45)), 4)
@@ -619,9 +617,7 @@ class QuizLoopManager:
                 self.clicked = False
 
 
-        if self.scaling:
-            self.draw_surface.blit(self.highlight_surface, (0, 0))
-        print(self.scale)
+        self.draw_surface.blit(self.highlight_surface, (0, 0))
         screen.blit(self.draw_surface, self.screen_offset)  # draws the map onto the display surface
         screen.blit(self.answer_surface, (0, 0))
 
@@ -639,6 +635,7 @@ class QuizLoopManager:
                     self.mode = 3
                 elif self.mode == 3:
                     self.mode = 1
+                    self.answer_surface = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
                 self.switch_modes(self.mode)
             else:
                 pygame.draw.rect(screen, (140, 140, 160), ((screen.get_width() - mode_text.get_width() - 40, screen.get_height() - 50), (mode_text.get_width() + 20, 45)), 4)
@@ -663,8 +660,7 @@ class QuizLoopManager:
         if self.mode_clicked and not pygame.mouse.get_pressed()[0]:
             self.mode_clicked = False
 
-        print(self.scaling)
-        self.scaling = False # is true on the frames, where is mousewheel is wheeld
+
 
     def scale_point(self, x, y):
         """Scale and translate a single point to screen coordinates."""
@@ -815,7 +811,6 @@ class QuizLoopManager:
             self.switch_modes(1)
             pass
         if mode == 3 and len(self.items["polygons"]) + len(self.items["lines"]) + len(self.items["blue_polygons"]) + len(self.items["points"]) > 9:
-            print("switch 3")
             self.mode = 3
             self.screen_offset = [-400, 100]
             self.input_capture.activate()
