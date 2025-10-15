@@ -4,6 +4,114 @@ import random
 from collections import defaultdict  # co to dela??
 
 import pygame
+from typing import List, Tuple
+
+Point = Tuple[float, float]
+Polygon = List[Point]
+
+def clip_polygon_to_screen(polygon: Polygon, screen_width: float, screen_height: float) -> Polygon:
+    """
+    Clips a polygon to the rectangle [0, screen_width] x [0, screen_height]
+    using the Sutherland–Hodgman polygon clipping algorithm.
+    Automatically removes crossing lines across the screen edges.
+    """
+    def inside(p: Point, edge: str) -> bool:
+        x, y = p
+        if edge == "left": return x >= 0
+        if edge == "right": return x <= screen_width
+        if edge == "bottom": return y >= 0
+        if edge == "top": return y <= screen_height
+        return True
+
+    def intersect(p1: Point, p2: Point, edge: str) -> Point:
+        x1, y1 = p1
+        x2, y2 = p2
+        if x1 == x2 and y1 == y2:
+            return p1
+
+        if edge == "left":
+            x, y = 0, y1 + (y2 - y1) * (0 - x1) / (x2 - x1)
+        elif edge == "right":
+            x, y = screen_width, y1 + (y2 - y1) * (screen_width - x1) / (x2 - x1)
+        elif edge == "bottom":
+            x, y = x1 + (x2 - x1) * (0 - y1) / (y2 - y1), 0
+        elif edge == "top":
+            x, y = x1 + (x2 - x1) * (screen_height - y1) / (y2 - y1), screen_height
+        return (x, y)
+
+    def clip_edge(polygon: Polygon, edge: str) -> Polygon:
+        clipped = []
+        if not polygon:
+            return clipped
+
+        prev_point = polygon[-1]
+        for curr_point in polygon:
+            prev_inside = inside(prev_point, edge)
+            curr_inside = inside(curr_point, edge)
+
+            if curr_inside:
+                if not prev_inside:
+                    clipped.append(intersect(prev_point, curr_point, edge))
+                clipped.append(curr_point)
+            elif prev_inside:
+                clipped.append(intersect(prev_point, curr_point, edge))
+
+            prev_point = curr_point
+        return clipped
+
+    # Clip polygon against all 4 screen edges
+    clipped_poly = polygon[:]
+    for edge in ["left", "right", "bottom", "top"]:
+        clipped_poly = clip_edge(clipped_poly, edge)
+        if not clipped_poly:
+            break
+
+    return clipped_poly
+
+def box_overlap_percent(boxA, boxB, relative_to="A"):
+    """
+    Calculate how much of one box overlaps another, as a percentage.
+
+    Parameters:
+        boxA, boxB: tuples (x1, y1, x2, y2)
+            Each box is defined by top-left (x1, y1) and bottom-right (x2, y2).
+        relative_to: str, optional
+            "A" (default) — overlap as % of boxA area
+            "B" — overlap as % of boxB area
+            "union" — overlap as % of union area
+
+    Returns:
+        float: Overlap percentage (0–100)
+    """
+
+    # Ensure coordinates are ordered correctly
+    x1A, y1A = sorted([boxA[0], boxA[2]]), sorted([boxA[1], boxA[3]])
+    x1B, y1B = sorted([boxB[0], boxB[2]]), sorted([boxB[1], boxB[3]])
+
+    # Compute overlap bounds
+    x_left = max(x1A[0], x1B[0])
+    y_top = max(y1A[0], y1B[0])
+    x_right = min(x1A[1], x1B[1])
+    y_bottom = min(y1A[1], y1B[1])
+
+    # Check for no overlap
+    if x_right <= x_left or y_bottom <= y_top:
+        return 0.0
+
+    # Areas
+    areaA = (x1A[1] - x1A[0]) * (y1A[1] - y1A[0])
+    areaB = (x1B[1] - x1B[0]) * (y1B[1] - y1B[0])
+    intersection = (x_right - x_left) * (y_bottom - y_top)
+    union = areaA + areaB - intersection
+
+    if relative_to == "B":
+        base = areaB
+    elif relative_to == "union":
+        base = union
+    else:
+        base = areaA
+
+    return 100.0 * intersection / base
 
 
 def circle_polygon_collision(circle_center, circle_radius, polygon_points):
@@ -210,6 +318,7 @@ class QuizLoopManager:
         self.highlight_surface.set_alpha(100)
         self.tested_places = [None, None, None, None, None, None, None, None, None, None]
         self.answered_places = [None, None, None, None, None, None, None, None, None, None]
+        self.answer_text_surfaces = [None, None, None, None, None, [None, ""], [None, ""], [None, ""], [None, ""], [None, ""]]
         self.button_begin_point = 100
         self.second_row_difference = 100
         self.selected_place = None
@@ -282,7 +391,7 @@ class QuizLoopManager:
         # change polygon qualyty based on zoom
         if self.scale < 10:
             self.map_index = 0
-        elif self.scale < 60:
+        elif self.scale < 120:
             self.map_index = 1
         else:
             self.map_index = 2
@@ -434,14 +543,13 @@ class QuizLoopManager:
             # first 5 questions - find the place
             for i in range(5):
 
-                text = self.font.render(self.tested_places[i][1], True, (0, 0, 0))
                 if self.selected_place == i:
                     color = self.outlines_colors[2]
                 else:
                     color = self.outlines_colors[0]
                 pygame.draw.rect(screen, (120, 100, 100), ((screen.get_width() - 380, self.button_begin_point + 60 * i), (300, 50)))
 
-                screen.blit(text, (screen.get_width() - 350, self.button_begin_point + 10 + 60 * i))
+                screen.blit(self.answer_text_surfaces[i], (screen.get_width() - 350, self.button_begin_point + 10 + 60 * i))
 
                 if pygame.rect.Rect((screen.get_width() - 380, self.button_begin_point + 60 * i), (300, 50)).collidepoint(pygame.mouse.get_pos()):
                     if pygame.mouse.get_pressed()[0]:
@@ -491,13 +599,16 @@ class QuizLoopManager:
             for i in range(5, 10):
 
                 text = self.font.render(self.answered_places[i], True, (0, 0, 0))
+                if self.answer_text_surfaces[i][1] != self.answered_places[i]:
+                    self.answer_text_surfaces[i][0] = self.font.render(self.answered_places[i], True, (0, 0, 0))
+                    self.answer_text_surfaces[i][1] = self.answered_places[i]
                 if self.selected_place == i:
                     color = self.outlines_colors[3]
                 else:
                     color = self.selected_colors[i]
                 pygame.draw.rect(screen, (120, 100, 100), ((screen.get_width() - 380, self.button_begin_point + 60 * i + self.second_row_difference), (300, 50)))
 
-                screen.blit(text, (screen.get_width() - 350, self.button_begin_point + 10 + 60 * i + self.second_row_difference))
+                screen.blit(self.answer_text_surfaces[i][0], (screen.get_width() - 350, self.button_begin_point + 10 + 60 * i + self.second_row_difference))
 
                 if pygame.rect.Rect((screen.get_width() - 380, self.button_begin_point + 60 * i + self.second_row_difference), (300, 50)).collidepoint(pygame.mouse.get_pos()):
                     if pygame.mouse.get_pressed()[0]:  # if the button has been pressed
@@ -560,10 +671,17 @@ class QuizLoopManager:
                     else:
                         lines = [i["points"] for i in
                                  self.map_data[2][place[0]][place[1]]["geometry"]]
-                        for points in lines:
+                        boxes = [i["bbox"] for i in
+                                 self.map_data[2][place[0]][place[1]]["geometry"]]
+                        for j, points in enumerate(lines):
                             if len(points) > 2:
-                                pygame.draw.polygon(self.highlight_surface, self.selected_colors[i], self.scale_points(points))
-
+                                overlap = box_overlap_percent(self.scale_bbox(boxes[j]), [self.screen_offset[0], self.screen_offset[1], self.screen.get_width() + self.screen_offset[0], self.screen.get_height() + self.screen_offset[1]])
+                                if overlap < 10:
+                                    points = clip_polygon_to_screen(self.scale_points(points), self.screen.get_width(), self.screen.get_height() + self.screen_offset[1])
+                                else:
+                                    points = self.scale_points(points)
+                                if len(points) > 3:
+                                    pygame.draw.polygon(self.highlight_surface, self.selected_colors[i], points)
 
 
             # the evaulate button
@@ -660,8 +778,6 @@ class QuizLoopManager:
         if self.mode_clicked and not pygame.mouse.get_pressed()[0]:
             self.mode_clicked = False
 
-
-
     def scale_point(self, x, y):
         """Scale and translate a single point to screen coordinates."""
         return (x * self.scale + self.position[0],
@@ -695,7 +811,16 @@ class QuizLoopManager:
                 if (scaled_max_x - scaled_min_x) < 2 or (scaled_max_y - scaled_min_y) < 2:
                     continue
 
+
                 scaled_polygon = self.scale_points(poly["points"])
+                if len(scaled_polygon) > 30:
+                    overlapp = box_overlap_percent([0, 0, screen_w, screen_h], [scaled_min_x, scaled_min_y, scaled_max_x, scaled_max_y], relative_to="B")
+                    if overlapp < 10:
+                        scaled_polygon = clip_polygon_to_screen(polygon=scaled_polygon, screen_width=screen_w, screen_height=screen_h)
+
+                    if len(scaled_polygon) < 3:
+                        continue
+
                 yield scaled_polygon, name
 
     def get_visible_lines(self):
@@ -742,6 +867,7 @@ class QuizLoopManager:
             if self.map_index == 1 and not data["capital"] and data["rank"] < 8:
                 continue
 
+
             yield (scaled_x, scaled_y), name, data["rank"], data["capital"]
 
         screen_w, screen_h = self.screen.get_size()
@@ -781,8 +907,6 @@ class QuizLoopManager:
                 scaled_polygon = self.scale_points(poly["points"])
                 yield scaled_polygon, name
 
-
-
     def clamp_position(self):
         """Clamp self.position so the map (centered at pos) stays inside screen."""
         map_width = self.original_map_size[0] * self.scale
@@ -818,7 +942,6 @@ class QuizLoopManager:
 
     def fill_quiz(self):
         i = 0
-        print('suhiwh')
         while i < 10:
             key = random.choice(list(self.items.keys()))
             while not len(self.items[key]):
@@ -827,6 +950,7 @@ class QuizLoopManager:
             if choice not in self.tested_places:
                 self.tested_places[i] = choice
                 i += 1
+        self.answer_text_surfaces = [self.font.render(self.tested_places[0][1], True, (0, 0, 0)), self.font.render(self.tested_places[1][1], True, (0, 0, 0)), self.font.render(self.tested_places[2][1], True, (0, 0, 0)), self.font.render(self.tested_places[3][1], True, (0, 0, 0)), self.font.render(self.tested_places[4][1], True, (0, 0, 0)), [None, ""], [None, ""], [None, ""], [None, ""], [None, ""]]
 
 
 class CreatorLoopManager:
