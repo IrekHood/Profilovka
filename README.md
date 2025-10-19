@@ -12,3 +12,5 @@ pygbag==0.9.2
 online verze lze najít [zde](https://irek-hood.itch.io/mistopis)
 
 v projektu jsou používány data z projektu [naturalearthdata.com](https://www.naturalearthdata.com/)
+
+[trello board](https://trello.com/b/kGC6kIHj/profilovka)
