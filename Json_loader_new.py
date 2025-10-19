@@ -3,9 +3,6 @@ import json
 import math
 
 
-# load the json
-with open("maps/World_s.json", "r") as f:
-    data = json.load(f)
 
 def preprocess_map_data(map_data):
     """
@@ -24,9 +21,8 @@ def preprocess_map_data(map_data):
             map_data[name][data] = processed_polys
 
 
-data["new_polygons"] = {}
 # Save the dictionary to a JSON file
-with open(f"maps/World_s.json", "w") as json_file:
-    json.dump(data, json_file, indent=4)
+with open(f"maps/High_quality/custom_polygons.json", "w") as json_file:
+    json.dump({}, json_file, indent=4)
 
 # View the first five rows

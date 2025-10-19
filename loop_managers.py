@@ -881,11 +881,6 @@ class QuizLoopManager:
             if scaled_x < 0 or scaled_x > screen_w or scaled_y < 0 or scaled_y > screen_h:
                 continue
 
-            # reject if city has low importance
-            if self.map_index == 0 and not data["capital"] and data["rank"] < 9:
-                continue
-            if self.map_index == 1 and not data["capital"] and data["rank"] < 8:
-                continue
 
             yield (scaled_x, scaled_y), name, data["rank"], data["capital"]
 
@@ -972,6 +967,8 @@ class CreatorLoopManager:
         self.font = pygame.font.SysFont("monospace", 40)
         self.object_font = pygame.font.SysFont("monospace", 20)
         self.padding = 6
+        self.clicked = False
+        self.text_offset = 0
 
     def __bool__(self):
         return self.active
@@ -986,6 +983,11 @@ class CreatorLoopManager:
                 self.input_capture.input_text = self.continent
         else:
             self.input_capture.deactivate()
+
+    def input(self, event):
+        if event.type == pygame.MOUSEWHEEL:
+            self.text_offset = min(0, self.text_offset + event.y * 3)
+
 
     def update(self):
 
@@ -1076,9 +1078,19 @@ class CreatorLoopManager:
             i = 0
             for type in self.my_objects.keys():
                 for term in self.my_objects[type]:
-                    text = self.object_font.render(term, True, (0, 0, 0))
-                    self.screen.blit(text, (self.screen.get_width()/3 + thickness + self.padding, 20 + thickness + self.padding + 300 + self.padding * 3 + i * 40))
+                    text_color = (0, 0, 0)
+                    if pygame.rect.Rect(self.screen.get_width()/3 * 2 + thickness + self.padding, thickness + self.padding * 2 + i * 40 + self.text_offset, self.screen.get_width()/3, thickness + self.padding * 4).collidepoint(pygame.mouse.get_pos()):
+                        pygame.draw.rect(self.screen, (150, 0, 0), (self.screen.get_width()/3 * 2 + thickness + self.padding, thickness + self.padding * 2 + i * 40 + self.text_offset, self.screen.get_width()/3,  thickness + self.padding * 4))
+                        text_color = (255, 255, 255)
+                        if pygame.mouse.get_pressed()[0] and not self.clicked:
+                            self.clicked = True
+                            self.my_objects[type].remove(term)
+                    text = self.object_font.render(term, True, text_color)
+                    self.screen.blit(text, (self.screen.get_width()/3 * 2 + thickness + self.padding, thickness + self.padding * 4 + i * 40 + self.text_offset))
                     i += 1
+
+        if not pygame.mouse.get_pressed()[0]:
+            self.clicked = False
 
         # objects shower
         if self.object_text:
@@ -1117,6 +1129,27 @@ class CreatorLoopManager:
         self.screen.blit(exp_txt, (exp_rec.centerx - exp_txt.get_width() / 2, exp_rec.centery - exp_txt.get_height() / 2))
 
 
+        # exit button
+        back_text = self.font.render("zahodit", True, (0, 0, 0))
+        pygame.draw.rect(self.screen, (120, 100, 100), ((self.screen.get_width() - back_text.get_width() - 40, self.screen.get_height() - back_text.get_height() - 20), (back_text.get_width() + 20, 45)))
+        self.screen.blit(back_text, (self.screen.get_width() - back_text.get_width() - 30, self.screen.get_height() - back_text.get_height() - 20 + 5))
+        if pygame.rect.Rect(((self.screen.get_width() - back_text.get_width() - 40, self.screen.get_height() - back_text.get_height() - 20), (back_text.get_width() + 20, 45))).collidepoint(pygame.mouse.get_pos()):
+            if pygame.mouse.get_pressed()[0]:
+                pygame.draw.rect(self.screen, (100, 100, 200), ((self.screen.get_width() - back_text.get_width() - 40, self.screen.get_height() - back_text.get_height() - 20), (back_text.get_width() + 20, 45)), 4)
+                self.my_objects = {"polygons": [],
+                                   "blue_polygons": [],
+                                   "points": [],
+                                   "lines": [],
+                                   "new_polygons": []}
+                self.object_text = ""
+                return False, False
+            else:
+                pygame.draw.rect(self.screen, (140, 140, 160), ((self.screen.get_width() - back_text.get_width() - 40, self.screen.get_height() - back_text.get_height() - 20), (back_text.get_width() + 20, 45)), 4)
+        else:
+            pygame.draw.rect(self.screen, (0, 0, 0), ((self.screen.get_width() - back_text.get_width() - 40, self.screen.get_height() - back_text.get_height() - 20), (back_text.get_width() + 20, 45)), 4)
+
+
+
 
         # mouse input handel ----------------------------------------------------------------------
         if pygame.mouse.get_pressed()[0]:
@@ -1138,6 +1171,7 @@ class Term_Creator_Manager(QuizLoopManager):
         self.term_name = ""
         self.input_capture.activate()
         self.enter_text = self.font.render("Potvrdit", True, (0, 0, 0))
+        self.changes = [False, False, False, False, False]
 
     def update(self, screen):
         # clear the draw surface
@@ -1223,17 +1257,34 @@ class Term_Creator_Manager(QuizLoopManager):
             if pygame.mouse.get_pressed()[0]:
                 pygame.draw.rect(screen, (100, 100, 200), (10, 10, self.enter_text.get_width() + 20, self.enter_text.get_height() + 10), 4)
                 self.save_term()
-                return False
+                self.new_term = [[], False]
+                self.term_name = ""
+                self.input_capture.activate()
             else:
                 pygame.draw.rect(screen, (140, 140, 160),(10, 10, self.enter_text.get_width() + 20, self.enter_text.get_height() + 10), 4)
         else:
             pygame.draw.rect(screen, (0, 0, 0), (10, 10, self.enter_text.get_width() + 20, self.enter_text.get_height() + 10), 4)
 
+        # exit button
+        back_text = self.font.render("zpět", True, (0, 0, 0))
+        pygame.draw.rect(self.screen, (120, 100, 100), ((self.screen.get_width() - back_text.get_width() - 40, 10), (back_text.get_width() + 20, 45)))
+        self.screen.blit(back_text, (self.screen.get_width() - back_text.get_width() - 30, 15))
+        if pygame.rect.Rect(((self.screen.get_width() - back_text.get_width() - 40, 10), (back_text.get_width() + 20, 45))).collidepoint(pygame.mouse.get_pos()):
+            if pygame.mouse.get_pressed()[0]:
+                pygame.draw.rect(self.screen, (100, 100, 200), ((self.screen.get_width() - back_text.get_width() - 40, 10), (back_text.get_width() + 20, 45)), 4)
+                return False, self.changes
+            else:
+                pygame.draw.rect(self.screen, (140, 140, 160), ((self.screen.get_width() - back_text.get_width() - 40, 10), (back_text.get_width() + 20, 45)), 4)
+        else:
+            pygame.draw.rect(self.screen, (0, 0, 0), ((self.screen.get_width() - back_text.get_width() - 40, 10), (back_text.get_width() + 20, 45)), 4)
+
+
+
 
 
         screen.blit(self.draw_surface, self.screen_offset)
 
-        return True
+        return True, self.changes
 
     def unscale_point(self, point):
         return (point[0] - self.position[0]) / self.scale, -((point[1] - self.position[1]) / self.scale)
@@ -1244,90 +1295,93 @@ class Term_Creator_Manager(QuizLoopManager):
                     "rank": 2,
                     "capital": False
                     }
-            with open("maps/World_h.json", "r") as h:
+            with open("maps/High_quality/cities.json", "r") as h:
                 data_h = json.load(h)
-            with open("maps/World_m.json", "r") as m:
+            with open("maps/Medium_quality/cities.json", "r") as m:
                 data_m = json.load(m)
-            with open("maps/World_s.json", "r") as s:
+            with open("maps/Low_quality/cities.json", "r") as s:
                 data_s = json.load(s)
             with open("maps/terms.json", "r") as t:
                 data_t = json.load(t)
 
-            data_s["points"][self.term_name] = dict
-            data_m["points"][self.term_name] = dict
-            data_h["points"][self.term_name] = dict
+            data_s[self.term_name] = dict
+            data_m[self.term_name] = dict
+            data_h[self.term_name] = dict
             data_t["points"].append(self.term_name)
 
-            with open("maps/World_h.json", "w") as h:
+            with open("maps/High_quality/cities.json", "w") as h:
                 json.dump(data_h, h, indent=4)
-            with open("maps/World_m.json", "w") as m:
+            with open("maps/Medium_quality/cities.json", "w") as m:
                 json.dump(data_m, m, indent=4)
-            with open("maps/World_s.json", "w") as s:
+            with open("maps/Low_quality/cities.json", "w") as s:
                 json.dump(data_s, s, indent=4)
 
             with open("maps/terms.json", "w") as t:
                 json.dump(data_t, t)
-
+            self.changes[0] = True
 
         if len(self.new_term[0]) > 1 and self.new_term[1]: # polygons
             self.new_term[0].append(self.new_term[0][0])
             dict = {"geometry": tuple(self.new_term[0])}
-            with open("maps/World_h.json", "r") as h:
+            with open("maps/High_quality/custom_polygons.json", "r") as h:
                 data_h = json.load(h)
-            with open("maps/World_m.json", "r") as m:
+            with open("maps/Medium_quality/custom_polygons.json", "r") as m:
                 data_m = json.load(m)
-            with open("maps/World_s.json", "r") as s:
+            with open("maps/Low_quality/custom_polygons.json", "r") as s:
                 data_s = json.load(s)
             with open("maps/terms.json", "r") as t:
                 data_t = json.load(t)
 
             preprocess_map_data(dict)
 
-            data_s["new_polygons"][self.term_name] = dict
-            data_m["new_polygons"][self.term_name] = dict
-            data_h["new_polygons"][self.term_name] = dict
+            data_s[self.term_name] = dict
+            data_m[self.term_name] = dict
+            data_h[self.term_name] = dict
             data_t["new_polygons"].append(self.term_name)
 
-            with open("maps/World_h.json", "w") as h:
+            with open("maps/High_quality/custom_polygons.json", "w") as h:
                 json.dump(data_h, h, indent=4)
-            with open("maps/World_m.json", "w") as m:
+            with open("maps/Medium_quality/custom_polygons.json", "w") as m:
                 json.dump(data_m, m, indent=4)
-            with open("maps/World_s.json", "w") as s:
+            with open("maps/Low_quality/custom_polygons.json", "w") as s:
                 json.dump(data_s, s, indent=4)
 
             with open("maps/terms.json", "w") as t:
                 json.dump(data_t, t)
+
+            self.changes[1] = True
 
         if len(self.new_term[0]) > 1 and not self.new_term[1]: # lines
 
             dict = {"geometry": tuple(self.new_term[0])}
 
-            with open("maps/World_h.json", "r") as h:
+            with open("maps/High_quality/lines.json", "r") as h:
                 data_h = json.load(h)
-            with open("maps/World_m.json", "r") as m:
+            with open("maps/Medium_quality/lines.json", "r") as m:
                 data_m = json.load(m)
-            with open("maps/World_s.json", "r") as s:
+            with open("maps/Low_quality/lines.json", "r") as s:
                 data_s = json.load(s)
             with open("maps/terms.json", "r") as t:
                 data_t = json.load(t)
 
             preprocess_map_data(dict)
 
-            data_s["lines"][self.term_name] = dict
-            data_m["lines"][self.term_name] = dict
-            data_h["lines"][self.term_name] = dict
+            data_s[self.term_name] = dict
+            data_m[self.term_name] = dict
+            data_h[self.term_name] = dict
             data_t["lines"].append(self.term_name)
 
-            with open("maps/World_h.json", "w") as h:
+            with open("maps/High_quality/lines.json", "w") as h:
                 json.dump(data_h, h, indent=4)
-            with open("maps/World_m.json", "w") as m:
+            with open("maps/Medium_quality/lines.json", "w") as m:
                 json.dump(data_m, m, indent=4)
-            with open("maps/World_s.json", "w") as s:
+            with open("maps/Low_quality/lines.json", "w") as s:
                 json.dump(data_s, s, indent=4)
 
             with open("maps/terms.json", "w") as t:
                 json.dump(data_t, t)
 
+            self.changes[4] = True
 
 class InputCapture:
     def __init__(self):

@@ -13,7 +13,7 @@ def mercator_projection(lon, lat):
 
 
 # Load the shapefile
-gdf = gpd.read_file("data/low_quality/cultular/ne_110m_admin_0_countries")
+gdf = gpd.read_file("data/high_quality/political/countries")
 READ_DATA = ["ADMIN", "geometry"]
 
 # Select the relevant columns
@@ -58,9 +58,8 @@ for _, row in gdf.iterrows():
     }
 preprocess_map_data(data_dict)
 
-out = {"polygons": data_dict}
 # Save the dictionary to a JSON file
-with open(f"maps/World_s.json", "w") as json_file:
-    json.dump(out, json_file, indent=4)
+with open(f"maps/High_quality/polygons.json", "w") as json_file:
+    json.dump(data_dict, json_file, indent=4)
 
 # View the first five rows

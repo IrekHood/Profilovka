@@ -1,0 +1,1962 @@
+{
+    "Vatican City": {
+        "geometry": [
+            13.863046438318275,
+            51.46502578859667
+        ],
+        "rank": 8,
+        "capital": true
+    },
+    "San Marino": {
+        "geometry": [
+            13.850115232309255,
+            54.55558181074557
+        ],
+        "rank": 7,
+        "capital": true
+    },
+    "Vaduz": {
+        "geometry": [
+            10.593908027878776,
+            59.639285804334094
+        ],
+        "rank": 7,
+        "capital": true
+    },
+    "Lobamba": {
+        "geometry": [
+            34.731677899236125,
+            -30.56995462109579
+        ],
+        "rank": 6,
+        "capital": false
+    },
+    "Luxembourg": {
+        "geometry": [
+            6.8238879025734125,
+            63.79291919043817
+        ],
+        "rank": 6,
+        "capital": true
+    },
+    "Palikir": {
+        "geometry": [
+            176.05174608045303,
+            7.718341798963725
+        ],
+        "rank": 6,
+        "capital": true
+    },
+    "Majuro": {
+        "geometry": [
+            190.77934354415126,
+            7.927359924209094
+        ],
+        "rank": 6,
+        "capital": true
+    },
+    "Funafuti": {
+        "geometry": [
+            199.50305896849807,
+            -9.515800269291503
+        ],
+        "rank": 6,
+        "capital": true
+    },
+    "Melekeok": {
+        "geometry": [
+            149.8655882627595,
+            8.358755973732665
+        ],
+        "rank": 6,
+        "capital": true
+    },
+    "Bir Lehlou": {
+        "geometry": [
+            -10.745138561747689,
+            30.138477511980877
+        ],
+        "rank": 6,
+        "capital": false
+    },
+    "Monaco": {
+        "geometry": [
+            8.245338057739765,
+            54.252397599066434
+        ],
+        "rank": 6,
+        "capital": true
+    },
+    "South Tarawa": {
+        "geometry": [
+            192.60227879745156,
+            1.4897989626757784
+        ],
+        "rank": 6,
+        "capital": true
+    },
+    "Moroni": {
+        "geometry": [
+            48.13481954988851,
+            -13.120579642350823
+        ],
+        "rank": 6,
+        "capital": true
+    },
+    "Andorra la Vella": {
+        "geometry": [
+            1.699396951329581,
+            52.37797564268844
+        ],
+        "rank": 6,
+        "capital": true
+    },
+    "Port of Spain": {
+        "geometry": [
+            -68.48044554902077,
+            11.926652566157076
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Kigali": {
+        "geometry": [
+            33.46106476353873,
+            -2.1729806306087647
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Mbabane": {
+        "geometry": [
+            34.65746943236657,
+            -30.38352653136636
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Juba": {
+        "geometry": [
+            35.15472369030544,
+            5.383083227924567
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "The Hague": {
+        "geometry": [
+            4.753299176229845,
+            68.14610091869595
+        ],
+        "rank": 4,
+        "capital": false
+    },
+    "Ljubljana": {
+        "geometry": [
+            16.157989579601512,
+            57.892136400784395
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Bratislava": {
+        "geometry": [
+            19.054535865742405,
+            61.318489213958514
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Doha": {
+        "geometry": [
+            57.36623745694113,
+            29.109828259442914
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Podgorica": {
+        "geometry": [
+            21.447154735749333,
+            52.3103746183029
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Sri Jayawardenepura Kotte": {
+        "geometry": [
+            88.99992509685788,
+            7.699682993065112
+        ],
+        "rank": 4,
+        "capital": false
+    },
+    "Baguio": {
+        "geometry": [
+            134.21784615206224,
+            18.545722230568956
+        ],
+        "rank": 4,
+        "capital": false
+    },
+    "Dodoma": {
+        "geometry": [
+            39.796721966096975,
+            -6.896624836499515
+        ],
+        "rank": 4,
+        "capital": false
+    },
+    "Bern": {
+        "geometry": [
+            8.312199104258493,
+            59.28485172469466
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Laayoune": {
+        "geometry": [
+            -14.694179352562069,
+            31.422225844355822
+        ],
+        "rank": 4,
+        "capital": false
+    },
+    "Pristina": {
+        "geometry": [
+            23.561865944144234,
+            52.613784616801766
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Roseau": {
+        "geometry": [
+            -68.33571028480065,
+            17.23915709577451
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Djibouti": {
+        "geometry": [
+            48.03213577991302,
+            12.996526581800152
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Putrajaya": {
+        "geometry": [
+            113.20639780067607,
+            3.265887200508343
+        ],
+        "rank": 4,
+        "capital": false
+    },
+    "Kyoto": {
+        "geometry": [
+            151.11404035950773,
+            41.68222251756311
+        ],
+        "rank": 4,
+        "capital": false
+    },
+    "Banjul": {
+        "geometry": [
+            -18.469797623739932,
+            15.116346141846499
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Skopje": {
+        "geometry": [
+            23.859620201172334,
+            51.60980357800241
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Bridgetown": {
+        "geometry": [
+            -66.36481395107599,
+            14.713882309750751
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Porto-Novo": {
+        "geometry": [
+            2.9128141825669487,
+            7.232639856075709
+        ],
+        "rank": 4,
+        "capital": false
+    },
+    "Bujumbura": {
+        "geometry": [
+            32.68340928739406,
+            -3.7604197510637056
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Kingstown": {
+        "geometry": [
+            -68.15005544601406,
+            14.775326388261274
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Castries": {
+        "geometry": [
+            -67.89695835369831,
+            15.751199942854116
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Basseterre": {
+        "geometry": [
+            -69.81625539353003,
+            19.560116893614545
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Port Louis": {
+        "geometry": [
+            64.00870041564337,
+            -22.927820403779602
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "St. George's": {
+        "geometry": [
+            -68.73048281763982,
+            13.516990137198968
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Manama": {
+        "geometry": [
+            56.3087955801383,
+            30.283569521630064
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Saint John's": {
+        "geometry": [
+            -68.85114268162758,
+            19.345695209219567
+        ],
+        "rank": 4,
+        "capital": true
+    },
+    "Montevideo": {
+        "geometry": [
+            -62.54688567765151,
+            -41.51029596808154
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Lom\u00e9": {
+        "geometry": [
+            1.3590009227067432,
+            6.841287816482985
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Tunis": {
+        "geometry": [
+            11.331965825314384,
+            44.116521350287776
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Abu Dhabi": {
+        "geometry": [
+            60.520614934529476,
+            28.103795329651554
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Ashgabat": {
+        "geometry": [
+            64.99199126643387,
+            45.723641757246554
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Lusaka": {
+        "geometry": [
+            31.482690097742058,
+            -17.370394665819777
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Harare": {
+        "geometry": [
+            34.556646367679676,
+            -20.160045962741325
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Dili": {
+        "geometry": [
+            139.79441084884354,
+            -9.563907357096781
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Port Vila": {
+        "geometry": [
+            187.36922723626435,
+            -20.06361140047754
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Tegucigalpa": {
+        "geometry": [
+            -97.09227566520553,
+            15.861498474686439
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Georgetown": {
+        "geometry": [
+            -64.7512400470978,
+            7.5897714635117035
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Reykjav\u00edk": {
+        "geometry": [
+            -24.41965131487887,
+            93.86287982262932
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Port-au-Prince": {
+        "geometry": [
+            -80.52627143141805,
+            21.01201287565107
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Kampala": {
+        "geometry": [
+            36.26942374907319,
+            0.354671068829524
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Paramaribo": {
+        "geometry": [
+            -61.411657883647884,
+            6.506783037024781
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Niamey": {
+        "geometry": [
+            2.3540846263934174,
+            15.19049836418109
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Dushanbe": {
+        "geometry": [
+            76.55873234686005,
+            46.58844906058066
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Asunci\u00f3n": {
+        "geometry": [
+            -64.14878470175941,
+            -29.114894372522453
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Managua": {
+        "geometry": [
+            -96.03581173012932,
+            13.633492193074126
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Freetown": {
+        "geometry": [
+            -14.734427693694814,
+            9.465494529278544
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Islamabad": {
+        "geometry": [
+            81.35298538227345,
+            39.8716767865417
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Kathmandu": {
+        "geometry": [
+            94.97188560430732,
+            32.135465424284924
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Bloemfontein": {
+        "geometry": [
+            29.199005475799176,
+            -33.90927452503163
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Pretoria": {
+        "geometry": [
+            31.42269056199684,
+            -29.62586443007999
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Port Moresby": {
+        "geometry": [
+            163.85394549339088,
+            -10.584311774684052
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Honiara": {
+        "geometry": [
+            178.05526470227412,
+            -10.55416521428574
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Panama City": {
+        "geometry": [
+            -88.5379380781167,
+            10.026358199099286
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Rabat": {
+        "geometry": [
+            -7.610254796789599,
+            40.32200684624331
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Chi\u0219in\u0103u": {
+        "geometry": [
+            32.124257051113986,
+            59.428940903654585
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Maputo": {
+        "geometry": [
+            36.275924139418564,
+            -29.933020094951267
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Mogadishu": {
+        "geometry": [
+            50.49978843949425,
+            2.30328571804819
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Muscat": {
+        "geometry": [
+            64.98643807647805,
+            27.029412211774304
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Colombo": {
+        "geometry": [
+            88.89724132688238,
+            7.735523601787969
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Ulaanbaatar": {
+        "geometry": [
+            119.01686611598933,
+            60.93326648928491
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Windhoek": {
+        "geometry": [
+            19.017316527954144,
+            -25.801003139072396
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Abuja": {
+        "geometry": [
+            8.337278876677086,
+            10.121776362108474
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Bissau": {
+        "geometry": [
+            -17.364015814657595,
+            13.303510788156206
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Amman": {
+        "geometry": [
+            39.99860041924803,
+            37.57007737537425
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Vilnius": {
+        "geometry": [
+            28.18234950195015,
+            73.00654891714821
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Riga": {
+        "geometry": [
+            26.827958764635113,
+            77.49910823949884
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Bishkek": {
+        "geometry": [
+            83.02570346791144,
+            52.92968728035025
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Maseru": {
+        "geometry": [
+            30.594239668244732,
+            -34.16013664096361
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Antananarivo": {
+        "geometry": [
+            52.893097601663584,
+            -21.44894791560436
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Quito": {
+        "geometry": [
+            -87.3880233229509,
+            -0.23715815001359017
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "San Jos\u00e9": {
+        "geometry": [
+            -93.59610757603404,
+            11.110201478314384
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "San Salvador": {
+        "geometry": [
+            -99.31432469388712,
+            15.401964750786563
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Kingston": {
+        "geometry": [
+            -85.4571162899039,
+            20.348655754530245
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "N'Djamena": {
+        "geometry": [
+            16.75046920163273,
+            13.58803777218894
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Malabo": {
+        "geometry": [
+            9.77749978796017,
+            4.1774815273215085
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Asmara": {
+        "geometry": [
+            43.340377469097916,
+            17.27646491295817
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Zagreb": {
+        "geometry": [
+            17.81111262699076,
+            57.48357871422165
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Tallinn": {
+        "geometry": [
+            27.52712899039344,
+            82.74761298421802
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Lilongwe": {
+        "geometry": [
+            37.60739975955381,
+            -15.723001083052432
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Guatemala City": {
+        "geometry": [
+            -100.77632319117379,
+            16.457994447224465
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Libreville": {
+        "geometry": [
+            10.528558477406037,
+            0.4290158621095688
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Suva": {
+        "geometry": [
+            198.64039992918364,
+            -20.531237107365648
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Valpara\u00edso": {
+        "geometry": [
+            -79.72370887771447,
+            -39.016422810274236
+        ],
+        "rank": 3,
+        "capital": false
+    },
+    "Nouakchott": {
+        "geometry": [
+            -17.783667585772115,
+            20.476671566461917
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Bamako": {
+        "geometry": [
+            -8.90776895535413,
+            14.199971879956387
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Beirut": {
+        "geometry": [
+            39.52706029576545,
+            40.11885234458035
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Tbilisi": {
+        "geometry": [
+            49.85871930688514,
+            51.201660931591476
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Nur-Sultan": {
+        "geometry": [
+            79.51303452440924,
+            66.53395444887671
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Vientiane": {
+        "geometry": [
+            114.21377529000053,
+            20.336503518467666
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Brazzaville": {
+        "geometry": [
+            17.012672354761605,
+            -4.743504535691149
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Conakry": {
+        "geometry": [
+            -15.230934107294534,
+            10.661920212498018
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Yamoussoukro": {
+        "geometry": [
+            -5.872662631105909,
+            7.608165768130707
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Ottawa": {
+        "geometry": [
+            -84.27103772836152,
+            56.876707625130685
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Belgrade": {
+        "geometry": [
+            22.78269685688324,
+            55.933213403389395
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Bandar Seri Begawan": {
+        "geometry": [
+            127.94314661210647,
+            5.442692766420636
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Sucre": {
+        "geometry": [
+            -72.64656046007693,
+            -21.59760157230471
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Belmopan": {
+        "geometry": [
+            -98.81505365569343,
+            19.501830604276773
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Bangui": {
+        "geometry": [
+            20.658991812868685,
+            4.865638678017508
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Yaound\u00e9": {
+        "geometry": [
+            12.81811086102812,
+            4.309833609362113
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Tirana": {
+        "geometry": [
+            22.062279636514663,
+            50.607745480432634
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Yerevan": {
+        "geometry": [
+            49.55009258651076,
+            48.92585160687593
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Baku": {
+        "geometry": [
+            55.50420011930472,
+            49.23833916190304
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Phnom Penh": {
+        "geometry": [
+            116.79049711686862,
+            12.947622021968584
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "La Paz": {
+        "geometry": [
+            -75.86638255498318,
+            -18.6223770231307
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Cotonou": {
+        "geometry": [
+            2.6765155100801454,
+            7.097842260639647
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Sofia": {
+        "geometry": [
+            25.953814448177596,
+            52.64192600299404
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Minsk": {
+        "geometry": [
+            30.6848628619487,
+            71.51603578849682
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Thimphu": {
+        "geometry": [
+            99.7856939369112,
+            31.826903909041
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Gaborone": {
+        "geometry": [
+            28.845048345578853,
+            -28.323643372278344
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Canberra": {
+        "geometry": [
+            166.00967259080753,
+            -42.02410415877703
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Ouagadougou": {
+        "geometry": [
+            -1.6994808248157063,
+            13.881037761193076
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Sarajevo": {
+        "geometry": [
+            20.463863884958826,
+            54.42262062767614
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Naypyidaw": {
+        "geometry": [
+            106.99659061707739,
+            22.45626987939983
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Nuku'alofa": {
+        "geometry": [
+            -195.05464016649947,
+            -24.08402395927012
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Hargeisa": {
+        "geometry": [
+            49.05327870847746,
+            10.691894785751328
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Victoria": {
+        "geometry": [
+            61.72664629028213,
+            -5.14478091114762
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "S\u00e3o Tom\u00e9": {
+        "geometry": [
+            7.49141189651012,
+            0.3756680579028466
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Apia": {
+        "geometry": [
+            -191.2119297238068,
+            -15.55375263237593
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Valletta": {
+        "geometry": [
+            16.157702041356796,
+            42.86833475077953
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Mal\u00e9": {
+        "geometry": [
+            81.82973375328132,
+            4.64839989822444
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Jerusalem": {
+        "geometry": [
+            39.19183667737277,
+            37.34258226308641
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Praia": {
+        "geometry": [
+            -26.17865833491829,
+            16.796017486784002
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Nassau": {
+        "geometry": [
+            -86.10567488653406,
+            28.85990700108729
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Nicosia": {
+        "geometry": [
+            37.14356806553071,
+            41.86554947087966
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Wellington": {
+        "geometry": [
+            194.56109011682636,
+            -50.555175451924754
+        ],
+        "rank": 3,
+        "capital": true
+    },
+    "Hanoi": {
+        "geometry": [
+            117.8295306460764,
+            23.96085025550936
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Ankara": {
+        "geometry": [
+            36.58230732677552,
+            48.55656879448058
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Budapest": {
+        "geometry": [
+            21.241289263716023,
+            60.24393796550168
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Sanaa": {
+        "geometry": [
+            49.20838850396154,
+            17.30340727054792
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Bucharest": {
+        "geometry": [
+            29.052161597784465,
+            55.33057604653225
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Damascus": {
+        "geometry": [
+            40.40680442788784,
+            39.62124526988586
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Lisbon": {
+        "geometry": [
+            -10.182184764857023,
+            46.82309112255992
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Khartoum": {
+        "geometry": [
+            36.21471656455927,
+            17.572934959652834
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Oslo": {
+        "geometry": [
+            11.964655939851477,
+            83.8164534927343
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Warsaw": {
+        "geometry": [
+            23.383045027816213,
+            68.41978202289981
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Pyongyang": {
+        "geometry": [
+            139.98731528124432,
+            47.2473519610746
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Dar es Salaam": {
+        "geometry": [
+            43.71115208007034,
+            -7.585391399296523
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Dublin": {
+        "geometry": [
+            -6.965237737676783,
+            70.4739312909827
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Monrovia": {
+        "geometry": [
+            -12.022126964682814,
+            7.043633562523908
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Kuala Lumpur": {
+        "geometry": [
+            113.19934224511334,
+            3.4969566451884764
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Havana": {
+        "geometry": [
+            -91.68955427573593,
+            26.48220198228166
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Prague": {
+        "geometry": [
+            16.05554279346413,
+            64.6135055757636
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Kuwait City": {
+        "geometry": [
+            53.40703442113171,
+            34.2303605358644
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Santo Domingo": {
+        "geometry": [
+            -77.8454330589864,
+            20.927227242727245
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Accra": {
+        "geometry": [
+            -0.2434129796804247,
+            6.190131237094218
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Tripoli": {
+        "geometry": [
+            14.671922022253373,
+            38.81043813796648
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Tel Aviv": {
+        "geometry": [
+            38.703633918549784,
+            37.74070983195715
+        ],
+        "rank": 2,
+        "capital": false
+    },
+    "Helsinki": {
+        "geometry": [
+            27.75468408007927,
+            84.36297654917347
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Copenhagen": {
+        "geometry": [
+            13.983442252473887,
+            74.95075363406397
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Abidjan": {
+        "geometry": [
+            -4.4752737777672005,
+            5.934219897795406
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Bras\u00edlia": {
+        "geometry": [
+            -53.3420714832505,
+            -17.79420789680952
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Brussels": {
+        "geometry": [
+            4.821659807609049,
+            65.92205207141218
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Dhaka": {
+        "geometry": [
+            100.64020416686058,
+            27.199344683930132
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Luanda": {
+        "geometry": [
+            14.730330691155656,
+            -9.875795983702425
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Algiers": {
+        "geometry": [
+            3.3936934547296214,
+            44.064027289162006
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "Yangon": {
+        "geometry": [
+            107.05008976247723,
+            18.95846946051333
+        ],
+        "rank": 2,
+        "capital": true
+    },
+    "San Francisco": {
+        "geometry": [
+            -136.25461096658822,
+            45.489940293135064
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Denver": {
+        "geometry": [
+            -116.8698380801807,
+            48.283955626444744
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Houston": {
+        "geometry": [
+            -106.14139372033216,
+            34.703360427908684
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Miami": {
+        "geometry": [
+            -89.30723245862737,
+            29.73039886966518
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Atlanta": {
+        "geometry": [
+            -93.91762931920536,
+            39.93870927873272
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Chicago": {
+        "geometry": [
+            -97.55509908652901,
+            51.382319193830334
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Caracas": {
+        "geometry": [
+            -74.4938712309568,
+            11.757859612848204
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Kyiv": {
+        "geometry": [
+            33.968788730906205,
+            65.22008530676858
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Dubai": {
+        "geometry": [
+            61.545146332149564,
+            29.021648824506038
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Tashkent": {
+        "geometry": [
+            77.10970097826628,
+            50.57260076870617
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Madrid": {
+        "geometry": [
+            -4.1024544112172405,
+            49.245288673628224
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Geneva": {
+        "geometry": [
+            6.83504790416442,
+            58.14067174594804
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Stockholm": {
+        "geometry": [
+            20.111313352796927,
+            82.50775464025097
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Bangkok": {
+        "geometry": [
+            111.89245087655267,
+            15.457731181073985
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Lima": {
+        "geometry": [
+            -85.77390295159242,
+            -13.509515552654472
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Dakar": {
+        "geometry": [
+            -19.45316561893756,
+            16.566963329474536
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Johannesburg": {
+        "geometry": [
+            31.200698012693334,
+            -30.19915652101829
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Amsterdam": {
+        "geometry": [
+            5.471012668806041,
+            68.64007947873222
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Casablanca": {
+        "geometry": [
+            -8.480667572596236,
+            39.75474319789447
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Seoul": {
+        "geometry": [
+            141.37328769205584,
+            45.18618603388305
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Manila": {
+        "geometry": [
+            134.6746219714809,
+            16.438465318198254
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Monterrey": {
+        "geometry": [
+            -111.68899424698063,
+            29.585058391931746
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Berlin": {
+        "geometry": [
+            14.916369605281227,
+            68.95388529108074
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "\u00dcr\u00fcmqi": {
+        "geometry": [
+            97.48588424144896,
+            54.35616941981817
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Chengdu": {
+        "geometry": [
+            115.84804960988916,
+            35.90217959753232
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Osaka": {
+        "geometry": [
+            150.84208917014647,
+            41.21981057775423
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Kinshasa": {
+        "geometry": [
+            17.046382568241587,
+            -4.8222482990175655
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "New Delhi": {
+        "geometry": [
+            85.93862462850902,
+            33.24835757013946
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Bengaluru": {
+        "geometry": [
+            86.33724180260172,
+            14.565267781270796
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Athens": {
+        "geometry": [
+            26.417646030881205,
+            45.77345463419758
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Baghdad": {
+        "geometry": [
+            49.416862525622605,
+            39.405999270614466
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Addis Ababa": {
+        "geometry": [
+            43.07848178040261,
+            10.09994880791053
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Tehran": {
+        "geometry": [
+            57.24315182992948,
+            42.558412302050286
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Vancouver": {
+        "geometry": [
+            -137.06055354571737,
+            63.21714449321103
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Toronto": {
+        "geometry": [
+            -88.37594100686492,
+            54.13690977123678
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Buenos Aires": {
+        "geometry": [
+            -65.04677558162282,
+            -41.11103849218743
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Kabul": {
+        "geometry": [
+            77.01228669153467,
+            40.98656607710587
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Vienna": {
+        "geometry": [
+            18.217093028801976,
+            61.40519974469008
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Melbourne": {
+        "geometry": [
+            161.383283756654,
+            -45.537591730873416
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Taipei": {
+        "geometry": [
+            135.32924959542964,
+            28.801465800606444
+        ],
+        "rank": 1,
+        "capital": true
+    },
+    "Auckland": {
+        "geometry": [
+            194.5453117513112,
+            -44.17948708952113
+        ],
+        "rank": 1,
+        "capital": false
+    },
+    "Los Angeles": {
+        "geometry": [
+            -131.61524529566205,
+            40.35412886522333
+        ],
+        "rank": 0,
+        "capital": false
+    },
+    "Washington": {
+        "geometry": [
+            -85.72865870303238,
+            47.0757141114161
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "New York City": {
+        "geometry": [
+            -82.37165597838342,
+            49.71358429174843
+        ],
+        "rank": 0,
+        "capital": false
+    },
+    "London": {
+        "geometry": [
+            -0.13210027937608948,
+            67.10566113138631
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Istanbul": {
+        "geometry": [
+            32.25401741344579,
+            50.149382625222465
+        ],
+        "rank": 0,
+        "capital": false
+    },
+    "Riyadh": {
+        "geometry": [
+            52.00900825224243,
+            28.309172113966657
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Cape Town": {
+        "geometry": [
+            20.519568826068724,
+            -40.17805469787894
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Moscow": {
+        "geometry": [
+            41.871242385535865,
+            75.09620827855088
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Mexico City": {
+        "geometry": [
+            -110.35427744855144,
+            22.073259500948346
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Lagos": {
+        "geometry": [
+            3.773268984644164,
+            7.189951834518204
+        ],
+        "rank": 0,
+        "capital": false
+    },
+    "Rome": {
+        "geometry": [
+            13.894133630636695,
+            51.45697832057983
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Beijing": {
+        "geometry": [
+            129.56943174654901,
+            48.516708038602815
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Nairobi": {
+        "geometry": [
+            40.98194882221527,
+            -1.4265678848908867
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Jakarta": {
+        "geometry": [
+            118.91981989898609,
+            -6.884493698129456
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Bogot\u00e1": {
+        "geometry": [
+            -82.47136735808104,
+            5.1243855012980175
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Cairo": {
+        "geometry": [
+            34.785139418648065,
+            35.10223647941267
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Shanghai": {
+        "geometry": [
+            135.1803325032184,
+            36.6114491925914
+        ],
+        "rank": 0,
+        "capital": false
+    },
+    "Tokyo": {
+        "geometry": [
+            155.56838903946138,
+            42.576329869977926
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Mumbai": {
+        "geometry": [
+            81.12501332835957,
+            21.62991562449158
+        ],
+        "rank": 0,
+        "capital": false
+    },
+    "Paris": {
+        "geometry": [
+            2.6193392265895663,
+            62.508168419946784
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Santiago": {
+        "geometry": [
+            -78.64778137678634,
+            -39.538806543132466
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Kolkata": {
+        "geometry": [
+            98.37206053001019,
+            25.8004881202681
+        ],
+        "rank": 0,
+        "capital": false
+    },
+    "Rio de Janeiro": {
+        "geometry": [
+            -48.10350912507127,
+            -26.20812957220983
+        ],
+        "rank": 0,
+        "capital": false
+    },
+    "S\u00e3o Paulo": {
+        "geometry": [
+            -51.90490090091381,
+            -26.994864568186955
+        ],
+        "rank": 0,
+        "capital": false
+    },
+    "Sydney": {
+        "geometry": [
+            168.32903819808095,
+            -40.115436642259525
+        ],
+        "rank": 0,
+        "capital": false
+    },
+    "Singapore": {
+        "geometry": [
+            115.60960459644386,
+            1.4416871118304955
+        ],
+        "rank": 0,
+        "capital": true
+    },
+    "Hong Kong": {
+        "geometry": [
+            127.10800486036023,
+            25.48415573608323
+        ],
+        "rank": 0,
+        "capital": false
+    },
+    "Zimo": {
+        "geometry": [
+            -34.142857142857146,
+            181.28571428571428
+        ],
+        "rank": 2,
+        "capital": false
+    },
+    "Timo": {
+        "geometry": [
+            -47.579341940858,
+            178.14660558100795
+        ],
+        "rank": 2,
+        "capital": false
+    }
+}

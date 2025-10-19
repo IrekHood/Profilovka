@@ -13,7 +13,7 @@ def mercator_projection(lon, lat):
 
 
 # Load the shapefile
-gdf = gpd.read_file("data/low_quality/cultular/ne_110m_populated_places")
+gdf = gpd.read_file("data/high_quality/political/cities")
 READ_DATA = ["NAME_EN", "geometry", "SCALERANK", "FEATURECLA"]
 
 print(gdf.columns)
@@ -23,11 +23,6 @@ print(gdf.head())
 gdf = gdf[READ_DATA]
 gdf = gdf.reset_index(drop=True)
 print(gdf.head())  # View the first five rows
-
-# load the json
-with open("maps/World_s.json", "r") as f:
-    data = json.load(f)
-
 
 # Convert the GeoDataFrame to a dictionary
 data_dict = {}
@@ -48,10 +43,8 @@ for _, row in gdf.iterrows():
         "capital": row["FEATURECLA"] == 'Admin-0 capital'
     }
 
-data["points"] = data_dict
-print(data_dict)
 # Save the dictionary to a JSON file
-with open(f"maps/World_s.json", "w") as json_file:
-    json.dump(data, json_file, indent=4)
+with open(f"maps/High_quality/cities.json", "w") as json_file:
+    json.dump(data_dict, json_file, indent=4)
 
 # View the first five rows

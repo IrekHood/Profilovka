@@ -18,14 +18,37 @@ WHITE = (255, 255, 255)
 # Clock for controlling the frame rate
 clock = pygame.time.Clock()
 
+def load_data(directory, changes=None, out=None):
+    if out is None:
+        out = {}
+    if changes is None:
+        changes = [True, True, True, True, True]
+    if changes[0]:
+        cities = json.load(open(f"maps/{directory}/cities.json", "r"))
+        out["points"] = cities
+    if changes[1]:
+        custom_polygons = json.load(open(f"maps/{directory}/custom_polygons.json", "r"))
+        out["new_polygons"] = custom_polygons
+    if changes[2]:
+        lakes = json.load(open(f"maps/{directory}/lakes.json", "r"))
+        out["blue_polygons"] = lakes
+    if changes[3]:
+        polygons = json.load(open(f"maps/{directory}/polygons.json", "r"))
+        out["polygons"] = polygons
+    if changes[4]:
+        rivers = json.load(open(f"maps/{directory}/rivers.json", "r"))
+        out["lines"] = rivers
+    return out
+
+
 
 # Main game loop
 async def main():
 
     # Load stuff
-    map_data_h = json.load(open("maps/World_h.json", "r"))
-    map_data_m = json.load(open("maps/World_m.json", "r"))
-    map_data_s = json.load(open("maps/World_s.json", "r"))
+    map_data_h = load_data("High_quality")
+    map_data_m = load_data("Medium_quality")
+    map_data_s = load_data("Low_quality")
 
     # settup managers
     Quiz_M = None
@@ -43,6 +66,7 @@ async def main():
                     running = False
             if Creator_M:
                 Creator_M.input_capture.handle_event(event)
+                Creator_M.input(event)
             if Quiz_M:
                 Quiz_M.input(event)
             if Term_M:
@@ -67,10 +91,15 @@ async def main():
                 Menu_M.active = False
 
         if Term_M:
-            if not Term_M.update(screen):
+            out = Term_M.update(screen)
+            if not out[0]:
                 Creator_M.active = True
                 Creator_M.objects = json.load(open("maps/terms.json", 'r'))
                 Term_M.active = False
+                # reload what is needed stuff
+                map_data_h = load_data("High_quality", out[1], map_data_h)
+                map_data_m = load_data("Medium_quality", out[1], map_data_m)
+                map_data_s = load_data("Low_quality", out[1], map_data_s)
 
         if Creator_M:
             out = Creator_M.update()
@@ -80,10 +109,6 @@ async def main():
                     Term_M = Term_Creator_Manager(screen, map_data_h, map_data_m, map_data_s, None)
                 else:
                     Creator_M.active = False
-                    # Load stuff
-                    map_data_h = json.load(open("maps/World_h.json", "r"))
-                    map_data_m = json.load(open("maps/World_m.json", "r"))
-                    map_data_s = json.load(open("maps/World_s.json", "r"))
                     Menu_M = MenuLoopManager(screen)
 
         # Update the display
