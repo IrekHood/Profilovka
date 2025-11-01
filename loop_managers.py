@@ -1027,7 +1027,7 @@ class CreatorLoopManager:
 
 
         # continent title
-        cont_txt = self.font.render("Kontinent", True, (0, 0, 0))
+        cont_txt = self.font.render("Oblast", True, (0, 0, 0))
         self.screen.blit(cont_txt, (self.screen.get_width()/3 + thickness + self.padding, 20 + thickness + self.padding + 100 + self.padding * 2))
 
         # continent selection
@@ -1099,6 +1099,17 @@ class CreatorLoopManager:
                 for term in self.objects[type]:
                     if self.object_text.lower() in term.lower():
                         text_rec = pygame.rect.Rect(0, i * 40, self.screen.get_width()/3, 40)
+                        if type == "polygons":
+                            pygame.draw.rect(self.screen, (255, 204, 0), text_rec)
+                        elif type == "lines":
+                            pygame.draw.rect(self.screen, (51, 153, 255), text_rec)
+                        elif type == "blue_polygons":
+                            pygame.draw.rect(self.screen, (0, 51, 153), text_rec)
+                        elif type == "points":
+                            pygame.draw.rect(self.screen, (180, 100, 180), text_rec)
+                        elif type == "new_polygons":
+                            pygame.draw.rect(self.screen, (120, 120, 120), text_rec)
+
                         if text_rec.collidepoint(pygame.mouse.get_pos()):
                             pygame.draw.rect(self.screen, (100, 180, 100), text_rec)
                             if pygame.mouse.get_pressed()[0]:
@@ -1115,7 +1126,7 @@ class CreatorLoopManager:
         if exp_rec.collidepoint(pygame.mouse.get_pos()):
             pygame.draw.rect(self.screen, (150, 150, 150), exp_rec, int(thickness / 3) + 1)
             if pygame.mouse.get_pressed()[0]:
-                out = {"Continent": "Europe",
+                out = {"Continent": self.continent,
                        "items": self.my_objects}
                 with open("maps/learning_sets/" + self.name + ".json", "w") as outfile:
                     outfile.write(json.dumps(out))
@@ -1188,8 +1199,27 @@ class Term_Creator_Manager(QuizLoopManager):
 
         # draw all polygons
         for scaled_polygon, name in self.get_visible_polygons():
+            pygame.draw.polygon(self.draw_surface, (100, 155, 100), scaled_polygon)
             pygame.draw.aalines(self.draw_surface, (0, 0, 0), False, scaled_polygon)
 
+        # draw all lines
+        for scaled_polygon, name in self.get_visible_lines():
+            pygame.draw.aalines(self.draw_surface, (60, 60, 200), False, scaled_polygon)
+
+        # draw all body's of water
+        for scaled_polygon, name in self.get_visible_water_bodeys():
+            pygame.draw.polygon(self.draw_surface, (60, 60, 220), scaled_polygon)
+
+        # draw all cities/points
+        for scaled_point, name, rank, capital in self.get_visible_points():
+            if capital:
+                pygame.draw.circle(self.draw_surface, (209, 49, 245), scaled_point, 2 + self.map_index * 1.5)
+            else:
+                pygame.draw.circle(self.draw_surface, (0, 0, 0), scaled_point, 1 + self.map_index / 2)
+
+        for scaled_polygon, name in self.get_visible_custom_polygons():
+            pygame.draw.polygon(self.highlight_surface, (100, 100, 100), scaled_polygon)
+            pygame.draw.aalines(self.draw_surface, (0, 0, 0), False, scaled_polygon)
 
         # creating a new term logic
         """

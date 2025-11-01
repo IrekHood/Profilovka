@@ -62,7 +62,7 @@ async def main():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+                if event.key == pygame.K_ESCAPE and Menu_M:
                     running = False
             if Creator_M:
                 Creator_M.input_capture.handle_event(event)
